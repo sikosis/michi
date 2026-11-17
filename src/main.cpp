@@ -1,0 +1,9 @@
+#include "MichiApp.h"
+
+int
+main()
+{
+	MichiApp app;
+	app.Run();
+	return 0;
+}
