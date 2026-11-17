@@ -16,24 +16,25 @@
 namespace {
 enum : uint32 { kSave = 'esav', kCancel = 'ecan' };
 
-rgb_color Unpack(uint32 value)
-{
+rgb_color Unpack(uint32 value) {
 	return {static_cast<uint8>(value >> 24), static_cast<uint8>(value >> 16),
 		static_cast<uint8>(value >> 8), static_cast<uint8>(value)};
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
 
-uint32 Pack(rgb_color color)
-{
+
+uint32 Pack(rgb_color color) {
 	return (static_cast<uint32>(color.red) << 24) | (static_cast<uint32>(color.green) << 16)
 		| (static_cast<uint32>(color.blue) << 8) | color.alpha;
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 }
 
 ProjectEditor::ProjectEditor(const Project* project, uint32 defaultColor, BMessenger target)
 	: BWindow(BRect(0, 0, 500, 470), project == nullptr ? "New project" : "Edit project",
 		B_TITLED_WINDOW, B_NOT_ZOOMABLE | B_AUTO_UPDATE_SIZE_LIMITS),
-	  fTarget(target)
-{
+	  fTarget(target) {
 	if (project != nullptr)
 		fProject = *project;
 	else
@@ -73,20 +74,22 @@ ProjectEditor::ProjectEditor(const Project* project, uint32 defaultColor, BMesse
 	CenterOnScreen();
 	fName->MakeFocus(true);
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 
 void
-ProjectEditor::MessageReceived(BMessage* message)
-{
+ProjectEditor::MessageReceived(BMessage* message) {
 	switch (message->what) {
 		case kSave: _Save(); break;
 		case kCancel: Quit(); break;
 		default: BWindow::MessageReceived(message); break;
 	}
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 
 void
-ProjectEditor::_Save()
-{
+ProjectEditor::_Save() {
 	BString name(fName->Text());
 	name.Trim();
 	if (name.IsEmpty()) {
@@ -109,9 +112,11 @@ ProjectEditor::_Save()
 	fTarget.SendMessage(&save);
 	Quit();
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 
 bool
-ProjectEditor::QuitRequested()
-{
+ProjectEditor::QuitRequested() {
 	return true;
 }
+//---------------------------------------------------------------------------------------------------------------------------------//

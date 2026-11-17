@@ -8,7 +8,11 @@
 class ProjectItem : public BListItem {
 public:
 	explicit ProjectItem(const Project& project);
-	const Project& Value() const { return fProject; }
+	const Project& Value() const {
+		return fProject;
+	}
+	//---------------------------------------------------------------------------------------------------------------------------------//
+
 	void DrawItem(BView* owner, BRect frame, bool complete) override;
 	void Update(BView* owner, const BFont* font) override;
 

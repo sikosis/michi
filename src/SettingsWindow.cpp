@@ -13,24 +13,25 @@
 namespace {
 enum : uint32 { kCancel = 'scan' };
 
-rgb_color Unpack(uint32 value)
-{
+rgb_color Unpack(uint32 value) {
 	return {static_cast<uint8>(value >> 24), static_cast<uint8>(value >> 16),
 		static_cast<uint8>(value >> 8), static_cast<uint8>(value)};
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
 
-uint32 Pack(rgb_color color)
-{
+
+uint32 Pack(rgb_color color) {
 	return (static_cast<uint32>(color.red) << 24) | (static_cast<uint32>(color.green) << 16)
 		| (static_cast<uint32>(color.blue) << 8) | color.alpha;
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 }
 
 SettingsWindow::SettingsWindow(const Settings& settings, BMessenger target)
 	: BWindow(BRect(0, 0, 430, 360), "Michi settings", B_TITLED_WINDOW,
 		B_NOT_ZOOMABLE | B_NOT_RESIZABLE | B_AUTO_UPDATE_SIZE_LIMITS),
-	  fSettings(settings), fTarget(target)
-{
+	  fSettings(settings), fTarget(target) {
 	BPopUpMenu* fields = new BPopUpMenu("field");
 	fields->SetRadioMode(true);
 	BMenuItem* created = new BMenuItem("Created date", nullptr);
@@ -68,10 +69,11 @@ SettingsWindow::SettingsWindow(const Settings& settings, BMessenger target)
 		.End();
 	CenterOnScreen();
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 
 void
-SettingsWindow::MessageReceived(BMessage* message)
-{
+SettingsWindow::MessageReceived(BMessage* message) {
 	if (message->what == kCancel) {
 		Quit();
 		return;
@@ -93,3 +95,4 @@ SettingsWindow::MessageReceived(BMessage* message)
 	}
 	BWindow::MessageReceived(message);
 }
+//---------------------------------------------------------------------------------------------------------------------------------//

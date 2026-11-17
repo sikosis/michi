@@ -18,8 +18,7 @@ namespace {
 constexpr uint32 kMsgMaybeShowMain = 'dflt';
 
 void AddAttribute(BMessage& info, const char* name, const char* publicName,
-	type_code type, int32 width, bool editable)
-{
+	type_code type, int32 width, bool editable) {
 	info.AddString("attr:name", name);
 	info.AddString("attr:public_name", publicName);
 	info.AddInt32("attr:type", type);
@@ -29,9 +28,10 @@ void AddAttribute(BMessage& info, const char* name, const char* publicName,
 	info.AddBool("attr:viewable", true);
 	info.AddBool("attr:editable", editable);
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
 
-void RegisterProjectAttributes(BMimeType& type)
-{
+
+void RegisterProjectAttributes(BMimeType& type) {
 	BMessage info;
 	AddAttribute(info, "MCHI:name", "Project", B_STRING_TYPE, 180, true);
 	AddAttribute(info, "MCHI:progress", "Progress", B_INT32_TYPE, 70, true);
@@ -39,17 +39,19 @@ void RegisterProjectAttributes(BMimeType& type)
 	AddAttribute(info, "MCHI:modified", "Modified", B_INT64_TYPE, 120, false);
 	type.SetAttrInfo(&info);
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 }
 
 MichiApp::MichiApp()
-	: BApplication(kAppSignature), fMainWindow(nullptr), fInitialMessageHandled(false)
-{
+	: BApplication(kAppSignature), fMainWindow(nullptr), fInitialMessageHandled(false) {
 	fSettingsStore.Load(fSettings);
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 
 void
-MichiApp::ReadyToRun()
-{
+MichiApp::ReadyToRun() {
 	BMimeType app(kAppSignature);
 	if (!app.IsInstalled())
 		app.Install();
@@ -64,25 +66,28 @@ MichiApp::ReadyToRun()
 	_InstallDeskbarItem();
 	PostMessage(kMsgMaybeShowMain);
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 
 void
-MichiApp::ArgvReceived(int32, char**)
-{
+MichiApp::ArgvReceived(int32, char**) {
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 
 void
-MichiApp::_InstallDeskbarItem()
-{
+MichiApp::_InstallDeskbarItem() {
 	BDeskbar deskbar;
 	if (!deskbar.IsRunning() || deskbar.HasItem(kDeskbarItemName))
 		return;
 	DeskbarView view(BRect(0, 0, 20, 20));
 	deskbar.AddItem(&view);
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 
 void
-MichiApp::_ShowMain()
-{
+MichiApp::_ShowMain() {
 	if (fMainWindow != nullptr) {
 		if (fMainWindow->Lock()) {
 			fMainWindow->Reload();
@@ -95,10 +100,11 @@ MichiApp::_ShowMain()
 	fMainWindow = new MainWindow(fStore, fSettings);
 	fMainWindow->Show();
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 
 void
-MichiApp::_ShowSettings()
-{
+MichiApp::_ShowSettings() {
 	for (int32 index = 0; index < CountWindows(); ++index) {
 		SettingsWindow* window = dynamic_cast<SettingsWindow*>(WindowAt(index));
 		if (window != nullptr && window->Lock()) {
@@ -109,19 +115,21 @@ MichiApp::_ShowSettings()
 	}
 	(new SettingsWindow(fSettings, BMessenger(this)))->Show();
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 
 void
-MichiApp::AboutRequested()
-{
+MichiApp::AboutRequested() {
 	BAlert* about = new BAlert("About Michi",
 		"Michi 1.0\n\nA small, native project progress tracker for Haiku.\n"
 		"Projects travel one step at a time.\n\nReleased under the MIT license.", "OK");
 	about->Go(nullptr);
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 
 void
-MichiApp::MessageReceived(BMessage* message)
-{
+MichiApp::MessageReceived(BMessage* message) {
 	switch (message->what) {
 		case kMsgMaybeShowMain:
 			if (!fInitialMessageHandled)
@@ -145,10 +153,11 @@ MichiApp::MessageReceived(BMessage* message)
 		default: BApplication::MessageReceived(message); break;
 	}
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 
 void
-MichiApp::_SaveProject(BMessage* message)
-{
+MichiApp::_SaveProject(BMessage* message) {
 	Project project;
 	const char* value;
 	if (message->FindString("id", &value) == B_OK) project.id = value;
@@ -167,10 +176,11 @@ MichiApp::_SaveProject(BMessage* message)
 	if (fMainWindow != nullptr)
 		BMessenger(fMainWindow).SendMessage(kMsgProjectsChanged);
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 
 void
-MichiApp::_ApplySettings(BMessage* message)
-{
+MichiApp::_ApplySettings(BMessage* message) {
 	int32 field;
 	if (message->FindInt32("sort_field", &field) == B_OK)
 		fSettings.sortField = static_cast<SortField>(field);
@@ -185,3 +195,4 @@ MichiApp::_ApplySettings(BMessage* message)
 	if (fMainWindow != nullptr)
 		BMessenger(fMainWindow).SendMessage(kMsgSettingsChanged);
 }
+//---------------------------------------------------------------------------------------------------------------------------------//

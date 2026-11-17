@@ -30,8 +30,16 @@ class ProjectStore {
 public:
 	ProjectStore();
 
-	status_t InitCheck() const { return fStatus; }
-	const BPath& DirectoryPath() const { return fDirectoryPath; }
+	status_t InitCheck() const {
+		return fStatus;
+	}
+	//---------------------------------------------------------------------------------------------------------------------------------//
+
+	const BPath& DirectoryPath() const {
+		return fDirectoryPath;
+	}
+	//---------------------------------------------------------------------------------------------------------------------------------//
+
 	status_t LoadAll(std::vector<Project>& projects) const;
 	status_t Save(Project& project) const;
 	status_t MoveToTrash(const Project& project) const;

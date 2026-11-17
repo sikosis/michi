@@ -18,8 +18,7 @@
 
 MainWindow::MainWindow(ProjectStore& store, Settings& settings)
 	: BWindow(BRect(0, 0, 620, 460), "Michi", B_TITLED_WINDOW,
-		B_AUTO_UPDATE_SIZE_LIMITS), fStore(store), fSettings(settings), fWatching(false)
-{
+		B_AUTO_UPDATE_SIZE_LIMITS), fStore(store), fSettings(settings), fWatching(false) {
 	fList = new BListView("projects", B_SINGLE_SELECTION_LIST);
 	fList->SetInvocationMessage(new BMessage(kMsgEditProject));
 	fEmpty = new BStringView("empty", "No projects yet. Choose New to begin.");
@@ -48,16 +47,18 @@ MainWindow::MainWindow(ProjectStore& store, Settings& settings)
 	}
 	Reload();
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
 
-MainWindow::~MainWindow()
-{
+
+MainWindow::~MainWindow() {
 	if (fWatching)
 		watch_node(&fWatchedDirectory, B_STOP_WATCHING, BMessenger(this));
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 
 void
-MainWindow::Reload()
-{
+MainWindow::Reload() {
 	fList->MakeEmpty();
 	status_t status = fStore.LoadAll(fProjects);
 	if (status != B_OK) {
@@ -77,10 +78,11 @@ MainWindow::Reload()
 		fList->AddItem(new ProjectItem(project));
 	_UpdateEmptyState();
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 
 void
-MainWindow::MessageReceived(BMessage* message)
-{
+MainWindow::MessageReceived(BMessage* message) {
 	switch (message->what) {
 		case B_NODE_MONITOR: Reload(); break;
 		case kMsgNewProject: _OpenEditor(nullptr); break;
@@ -96,24 +98,27 @@ MainWindow::MessageReceived(BMessage* message)
 		default: BWindow::MessageReceived(message); break;
 	}
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 
 Project*
-MainWindow::_SelectedProject()
-{
+MainWindow::_SelectedProject() {
 	int32 index = fList->CurrentSelection();
 	return index >= 0 && index < static_cast<int32>(fProjects.size())
 		? &fProjects[static_cast<size_t>(index)] : nullptr;
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 
 void
-MainWindow::_OpenEditor(const Project* project)
-{
+MainWindow::_OpenEditor(const Project* project) {
 	(new ProjectEditor(project, fSettings.defaultColor, BMessenger(be_app)))->Show();
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 
 void
-MainWindow::_DeleteSelected()
-{
+MainWindow::_DeleteSelected() {
 	Project* project = _SelectedProject();
 	if (project == nullptr)
 		return;
@@ -131,10 +136,11 @@ MainWindow::_DeleteSelected()
 	}
 	Reload();
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 
 void
-MainWindow::_UpdateEmptyState()
-{
+MainWindow::_UpdateEmptyState() {
 	bool empty = fProjects.empty();
 	if (empty) {
 		if (fEmpty->IsHidden())
@@ -148,10 +154,12 @@ MainWindow::_UpdateEmptyState()
 			fList->Show();
 	}
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 
 bool
-MainWindow::QuitRequested()
-{
+MainWindow::QuitRequested() {
 	be_app->PostMessage(B_QUIT_REQUESTED);
 	return true;
 }
+//---------------------------------------------------------------------------------------------------------------------------------//

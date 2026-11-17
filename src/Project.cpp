@@ -9,10 +9,12 @@
 #include <Node.h>
 #include <NodeInfo.h>
 #include <OS.h>
+#include <Volume.h>
 
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
+#include <fs_attr.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -23,20 +25,21 @@ constexpr const char* kColorAttr = "MCHI:color";
 constexpr const char* kCreatedAttr = "MCHI:created";
 constexpr const char* kModifiedAttr = "MCHI:modified";
 
-int64 Now()
-{
+int64 Now() {
 	return real_time_clock_usecs();
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
 
-status_t WriteStringAttr(BNode& node, const char* name, const BString& value)
-{
+
+status_t WriteStringAttr(BNode& node, const char* name, const BString& value) {
 	ssize_t written = node.WriteAttr(name, B_STRING_TYPE, 0, value.String(),
 		value.Length() + 1);
 	return written == value.Length() + 1 ? B_OK : (written < 0 ? written : B_ERROR);
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
 
-status_t ReadStringAttr(BNode& node, const char* name, BString& value)
-{
+
+status_t ReadStringAttr(BNode& node, const char* name, BString& value) {
 	attr_info info;
 	status_t status = node.GetAttrInfo(name, &info);
 	if (status != B_OK || info.type != B_STRING_TYPE || info.size <= 0 || info.size > 65536)
@@ -48,36 +51,40 @@ status_t ReadStringAttr(BNode& node, const char* name, BString& value)
 	value.SetTo(buffer.data(), static_cast<int32>(strnlen(buffer.data(), read)));
 	return B_OK;
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 
 template<typename T>
-status_t WriteAttr(BNode& node, const char* name, type_code type, const T& value)
-{
+status_t WriteAttr(BNode& node, const char* name, type_code type, const T& value) {
 	ssize_t written = node.WriteAttr(name, type, 0, &value, sizeof(T));
 	return written == static_cast<ssize_t>(sizeof(T)) ? B_OK
 		: (written < 0 ? written : B_ERROR);
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 
 template<typename T>
-status_t ReadAttr(BNode& node, const char* name, type_code type, T& value)
-{
+status_t ReadAttr(BNode& node, const char* name, type_code type, T& value) {
 	ssize_t read = node.ReadAttr(name, type, 0, &value, sizeof(T));
 	return read == static_cast<ssize_t>(sizeof(T)) ? B_OK
 		: (read < 0 ? read : B_BAD_DATA);
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 }
 
 ProjectStore::ProjectStore()
-	: fStatus(find_directory(B_USER_DATA_DIRECTORY, &fDirectoryPath, true))
-{
+	: fStatus(find_directory(B_USER_DATA_DIRECTORY, &fDirectoryPath, true)) {
 	if (fStatus == B_OK)
 		fStatus = fDirectoryPath.Append("Michi/Projects");
 	if (fStatus == B_OK)
 		fStatus = create_directory(fDirectoryPath.Path(), 0755);
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 
 status_t
-ProjectStore::LoadAll(std::vector<Project>& projects) const
-{
+ProjectStore::LoadAll(std::vector<Project>& projects) const {
 	projects.clear();
 	if (fStatus != B_OK)
 		return fStatus;
@@ -95,10 +102,11 @@ ProjectStore::LoadAll(std::vector<Project>& projects) const
 	}
 	return B_OK;
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 
 status_t
-ProjectStore::_Read(const entry_ref& ref, Project& project) const
-{
+ProjectStore::_Read(const entry_ref& ref, Project& project) const {
 	BFile file(&ref, B_READ_ONLY);
 	status_t status = file.InitCheck();
 	if (status != B_OK)
@@ -124,10 +132,11 @@ ProjectStore::_Read(const entry_ref& ref, Project& project) const
 	}
 	return B_OK;
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 
 status_t
-ProjectStore::Save(Project& project) const
-{
+ProjectStore::Save(Project& project) const {
 	if (fStatus != B_OK || project.name.IsEmpty() || project.progress < 0
 		|| project.progress > 100) {
 		return B_BAD_VALUE;
@@ -163,10 +172,11 @@ ProjectStore::Save(Project& project) const
 	BNodeInfo info(&file);
 	return info.SetType(kProjectMimeType);
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 
 status_t
-ProjectStore::MoveToTrash(const Project& project) const
-{
+ProjectStore::MoveToTrash(const Project& project) const {
 	BPath path(fDirectoryPath);
 	status_t status = path.Append(project.id.String());
 	if (status != B_OK)
@@ -177,16 +187,20 @@ ProjectStore::MoveToTrash(const Project& project) const
 	entry_ref ref;
 	if ((status = entry.GetRef(&ref)) != B_OK)
 		return status;
+	BVolume volume(ref.device);
+	if ((status = volume.InitCheck()) != B_OK)
+		return status;
 	BPath trashPath;
-	if ((status = find_directory(B_TRASH_DIRECTORY, &trashPath, true, ref.device)) != B_OK)
+	if ((status = find_directory(B_TRASH_DIRECTORY, &trashPath, true, &volume)) != B_OK)
 		return status;
 	BDirectory trash(trashPath.Path());
 	return entry.MoveTo(&trash, project.id.String(), false);
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 
 SettingsStore::SettingsStore()
-	: fStatus(find_directory(B_USER_SETTINGS_DIRECTORY, &fPath, true))
-{
+	: fStatus(find_directory(B_USER_SETTINGS_DIRECTORY, &fPath, true)) {
 	if (fStatus == B_OK) {
 		fStatus = fPath.Append("Michi");
 		if (fStatus == B_OK)
@@ -195,10 +209,11 @@ SettingsStore::SettingsStore()
 			fStatus = fPath.Append("settings");
 	}
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 
 status_t
-SettingsStore::Load(Settings& settings) const
-{
+SettingsStore::Load(Settings& settings) const {
 	if (fStatus != B_OK)
 		return fStatus;
 	BFile file(fPath.Path(), B_READ_ONLY);
@@ -217,10 +232,11 @@ SettingsStore::Load(Settings& settings) const
 	message.FindUInt32("default_color", &settings.defaultColor);
 	return B_OK;
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 
 status_t
-SettingsStore::Save(const Settings& settings) const
-{
+SettingsStore::Save(const Settings& settings) const {
 	if (fStatus != B_OK)
 		return fStatus;
 	BFile file(fPath.Path(), B_WRITE_ONLY | B_CREATE_FILE | B_ERASE_FILE);
@@ -233,3 +249,4 @@ SettingsStore::Save(const Settings& settings) const
 	message.AddUInt32("default_color", settings.defaultColor);
 	return message.Flatten(&file);
 }
+//---------------------------------------------------------------------------------------------------------------------------------//
