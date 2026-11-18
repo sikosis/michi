@@ -29,7 +29,7 @@ uint32 Pack(rgb_color color) {
 }
 
 SettingsWindow::SettingsWindow(const Settings& settings, BMessenger target)
-	: BWindow(BRect(0, 0, 430, 360), "Michi settings", B_TITLED_WINDOW,
+	: BWindow(BRect(0, 0, 430, 360), kSettingsWindowTitle, B_TITLED_WINDOW,
 		B_NOT_ZOOMABLE | B_NOT_RESIZABLE | B_AUTO_UPDATE_SIZE_LIMITS),
 	  fSettings(settings), fTarget(target) {
 	BPopUpMenu* fields = new BPopUpMenu("field");

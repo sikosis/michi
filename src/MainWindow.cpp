@@ -16,7 +16,8 @@
 #include <algorithm>
 #include <cstring>
 
-MainWindow::MainWindow(ProjectStore& store, Settings& settings)	: BWindow(BRect(0, 0, 620, 460), "Michi", B_TITLED_WINDOW,
+MainWindow::MainWindow(ProjectStore& store, Settings& settings)
+	: BWindow(BRect(0, 0, 620, 460), kAppTitle, B_TITLED_WINDOW,
 		B_AUTO_UPDATE_SIZE_LIMITS), fStore(store), fSettings(settings), fWatching(false) {
 	fList = new BListView("projects", B_SINGLE_SELECTION_LIST);
 	fList->SetInvocationMessage(new BMessage(kMsgEditProject));

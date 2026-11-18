@@ -32,7 +32,8 @@ uint32 Pack(rgb_color color) {
 }
 
 ProjectEditor::ProjectEditor(const Project* project, uint32 defaultColor, BMessenger target)
-	: BWindow(BRect(0, 0, 500, 470), project == nullptr ? "New project" : "Edit project",
+	: BWindow(BRect(0, 0, 500, 470),
+		project == nullptr ? kNewProjectWindowTitle : kEditProjectWindowTitle,
 		B_TITLED_WINDOW, B_NOT_ZOOMABLE | B_AUTO_UPDATE_SIZE_LIMITS),
 	  fTarget(target) {
 	if (project != nullptr)

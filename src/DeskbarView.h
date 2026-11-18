@@ -1,6 +1,7 @@
 #ifndef MICHI_DESKBAR_VIEW_H
 #define MICHI_DESKBAR_VIEW_H
 
+#include <BeBuild.h>
 #include <View.h>
 
 class DeskbarView : public BView {
@@ -19,6 +20,6 @@ private:
 	void _ShowMenu(BPoint where);
 };
 
-extern "C" BView* instantiate_deskbar_item(float maxWidth, float maxHeight);
+extern "C" _EXPORT BView* instantiate_deskbar_item(float maxWidth, float maxHeight);
 
 #endif

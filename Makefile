@@ -7,6 +7,7 @@ APP_MIME_SIG = application/x-vnd.michi
 SRCS = \
 	src/main.cpp \
 	src/MichiApp.cpp \
+	src/AboutWindow.cpp \
 	src/Project.cpp \
 	src/ProjectItem.cpp \
 	src/ProjectEditor.cpp \

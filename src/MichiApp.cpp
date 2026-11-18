@@ -1,5 +1,6 @@
 #include "MichiApp.h"
 
+#include "AboutWindow.h"
 #include "Constants.h"
 #include "DeskbarView.h"
 #include "MainWindow.h"
@@ -83,8 +84,10 @@ MichiApp::_InstallDeskbarItem() {
 	BDeskbar deskbar;
 	if (!deskbar.IsRunning() || deskbar.HasItem(kDeskbarItemName))
 		return;
-	DeskbarView view(BRect(0, 0, 20, 20));
-	status_t status = deskbar.AddItem(&view);
+	app_info info;
+	status_t status = GetAppInfo(&info);
+	if (status == B_OK)
+		status = deskbar.AddItem(&info.ref);
 	if (status != B_OK) {
 		BString error("Could not install the Deskbar item: ");
 		error << strerror(status);
@@ -128,10 +131,7 @@ MichiApp::_ShowSettings() {
 
 void
 MichiApp::AboutRequested() {
-	BAlert* about = new BAlert("About Michi",
-		"Michi v0.1\n\nA small, native project progress tracker for Haiku.\n"
-		"Are you on the right path?\n\nReleased under the MIT license.", "OK");
-	about->Go(nullptr);
+	(new AboutWindow())->Show();
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
