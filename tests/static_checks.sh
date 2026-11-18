@@ -15,5 +15,7 @@ grep -q 'MCHI:modified' "$root/src/Project.cpp"
 grep -q 'B_USER_NONPACKAGED_DATA_DIRECTORY' "$root/src/Project.cpp"
 grep -q 'B_SECONDARY_MOUSE_BUTTON' "$root/src/DeskbarView.cpp"
 grep -q 'B_TRASH_DIRECTORY' "$root/src/Project.cpp"
+grep -q 'SetAppHint' "$root/src/MichiApp.cpp"
+grep -q 'status = deskbar.AddItem' "$root/src/MichiApp.cpp"
 
 echo "Michi static checks passed"

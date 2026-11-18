@@ -55,6 +55,9 @@ MichiApp::ReadyToRun() {
 	BMimeType app(kAppSignature);
 	if (!app.IsInstalled())
 		app.Install();
+	app_info info;
+	if (GetAppInfo(&info) == B_OK)
+		app.SetAppHint(&info.ref);
 	BMimeType project(kProjectMimeType);
 	if (!project.IsInstalled()) {
 		project.Install();
@@ -81,7 +84,12 @@ MichiApp::_InstallDeskbarItem() {
 	if (!deskbar.IsRunning() || deskbar.HasItem(kDeskbarItemName))
 		return;
 	DeskbarView view(BRect(0, 0, 20, 20));
-	deskbar.AddItem(&view);
+	status_t status = deskbar.AddItem(&view);
+	if (status != B_OK) {
+		BString error("Could not install the Deskbar item: ");
+		error << strerror(status);
+		(new BAlert("Michi", error.String(), "OK"))->Go();
+	}
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
