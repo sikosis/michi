@@ -57,22 +57,28 @@ DeskbarView::AttachedToWindow() {
 void
 DeskbarView::Draw(BRect) {
 	BRect bounds(Bounds());
-	float inset = std::max(2.0f, bounds.Height() * 0.16f);
-	BRect icon(bounds.InsetByCopy(inset, inset));
-	SetPenSize(std::max(2.0f, bounds.Height() * 0.13f));
+	BRect tile(bounds.InsetByCopy(1.0f, 1.0f));
+	float radius = std::max(3.0f, tile.Height() * 0.22f);
+	SetHighColor(31, 98, 190);
+	FillRoundRect(tile, radius, radius);
+	SetHighColor(112, 181, 255);
+	StrokeRoundRect(tile, radius, radius);
+
+	float routeInset = std::max(3.5f, bounds.Height() * 0.22f);
+	BRect route(bounds.InsetByCopy(routeInset, routeInset));
+	SetPenSize(std::max(2.2f, bounds.Height() * 0.14f));
 	SetLineMode(B_ROUND_CAP, B_ROUND_JOIN);
-	SetHighColor(70, 89, 110);
-	BPoint a(icon.left, icon.bottom - icon.Height() * 0.15f);
-	BPoint b(icon.left + icon.Width() * 0.32f, icon.top + icon.Height() * 0.52f);
-	BPoint c(icon.left + icon.Width() * 0.62f, icon.top + icon.Height() * 0.68f);
-	BPoint d(icon.right, icon.top + icon.Height() * 0.12f);
+	SetHighColor(255, 255, 255);
+	BPoint a(route.left, route.bottom);
+	BPoint b(route.left + route.Width() * 0.34f, route.top + route.Height() * 0.52f);
+	BPoint c(route.left + route.Width() * 0.64f, route.top + route.Height() * 0.68f);
+	BPoint d(route.right, route.top);
 	StrokeLine(a, b);
 	StrokeLine(b, c);
-	SetHighColor(59, 130, 246);
 	StrokeLine(c, d);
-	SetPenSize(1);
-	FillEllipse(d, std::max(2.0f, bounds.Height() * 0.11f),
-		std::max(2.0f, bounds.Height() * 0.11f));
+	SetHighColor(255, 204, 64);
+	float markerRadius = std::max(2.0f, bounds.Height() * 0.12f);
+	FillEllipse(d, markerRadius, markerRadius);
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
