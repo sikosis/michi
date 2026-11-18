@@ -12,6 +12,7 @@ grep -q '^NAME = michi$' "$root/Makefile"
 grep -q 'application/x-vnd.michi' "$root/resources/Michi.rdef"
 grep -q 'MCHI:created' "$root/src/Project.cpp"
 grep -q 'MCHI:modified' "$root/src/Project.cpp"
+grep -q 'B_USER_NONPACKAGED_DATA_DIRECTORY' "$root/src/Project.cpp"
 grep -q 'B_SECONDARY_MOUSE_BUTTON' "$root/src/DeskbarView.cpp"
 grep -q 'B_TRASH_DIRECTORY' "$root/src/Project.cpp"
 

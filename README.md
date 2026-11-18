@@ -18,8 +18,8 @@ the Deskbar item installed; choose **Quit** from its context menu to remove it.
 
 ## Project data
 
-Michi keeps one file per project in the user's Haiku data directory under
-`Michi/Projects`. Notes are the UTF-8 file contents; the name, progress,
+Michi keeps one file per project in the user's Haiku non-packaged data directory
+under `Michi/Projects`. Notes are the UTF-8 file contents; the name, progress,
 colour, created time, and modified time use `MCHI:*` BFS attributes. Settings
 are stored as a flattened `BMessage` in the user's settings directory.
 

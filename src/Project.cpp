@@ -74,7 +74,7 @@ status_t ReadAttr(BNode& node, const char* name, type_code type, T& value) {
 }
 
 ProjectStore::ProjectStore()
-	: fStatus(find_directory(B_USER_DATA_DIRECTORY, &fDirectoryPath, true)) {
+	: fStatus(find_directory(B_USER_NONPACKAGED_DATA_DIRECTORY, &fDirectoryPath, true)) {
 	if (fStatus == B_OK)
 		fStatus = fDirectoryPath.Append("Michi/Projects");
 	if (fStatus == B_OK)
