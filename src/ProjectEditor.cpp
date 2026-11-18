@@ -40,7 +40,7 @@ ProjectEditor::ProjectEditor(const Project* project, uint32 defaultColor, BMesse
 	else
 		fProject.color = defaultColor;
 
-	fName = new BTextControl("Project name:", fProject.name.String(), nullptr);
+	fName = new BTextControl("Project Name:", fProject.name.String(), nullptr);
 	fProgress = new BSlider("progress", "Progress", nullptr, 0, 100, B_HORIZONTAL);
 	fProgress->SetValue(fProject.progress);
 	fProgress->SetHashMarks(B_HASH_MARKS_BOTTOM);
@@ -64,7 +64,7 @@ ProjectEditor::ProjectEditor(const Project* project, uint32 defaultColor, BMesse
 			.Add(new BStringView("notes_label", "Notes:"))
 			.Add(new BScrollView("notes_scroll", fNotes, 0, false, true), 1)
 		.End()
-		.Add(new BStringView("color_label", "Progress colour:"))
+		.Add(new BStringView("color_label", "Progress Colour:"))
 		.Add(fColor)
 		.AddGroup(B_HORIZONTAL)
 			.AddGlue()
@@ -93,7 +93,7 @@ ProjectEditor::_Save() {
 	BString name(fName->Text());
 	name.Trim();
 	if (name.IsEmpty()) {
-		(new BAlert("Michi", "Please enter a project name.", "OK"))->Go();
+		(new BAlert("Michi", "Please enter a Project Name.", "OK"))->Go();
 		fName->MakeFocus(true);
 		return;
 	}

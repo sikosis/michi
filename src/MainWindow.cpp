@@ -16,8 +16,7 @@
 #include <algorithm>
 #include <cstring>
 
-MainWindow::MainWindow(ProjectStore& store, Settings& settings)
-	: BWindow(BRect(0, 0, 620, 460), "Michi", B_TITLED_WINDOW,
+MainWindow::MainWindow(ProjectStore& store, Settings& settings)	: BWindow(BRect(0, 0, 620, 460), "Michi", B_TITLED_WINDOW,
 		B_AUTO_UPDATE_SIZE_LIMITS), fStore(store), fSettings(settings), fWatching(false) {
 	fList = new BListView("projects", B_SINGLE_SELECTION_LIST);
 	fList->SetInvocationMessage(new BMessage(kMsgEditProject));
@@ -62,7 +61,7 @@ MainWindow::Reload() {
 	fList->MakeEmpty();
 	status_t status = fStore.LoadAll(fProjects);
 	if (status != B_OK) {
-		BString message("Michi could not read its project folder: ");
+		BString message("Michi could not read its Project Folder: ");
 		message << strerror(status);
 		(new BAlert("Michi", message.String(), "OK"))->Go();
 	}
@@ -124,7 +123,7 @@ MainWindow::_DeleteSelected() {
 		return;
 	BString prompt;
 	prompt.SetToFormat("Move ‘%s’ to Trash?", project->name.String());
-	BAlert* alert = new BAlert("Delete project", prompt.String(), "Cancel", "Move to Trash",
+	BAlert* alert = new BAlert("Delete Project", prompt.String(), "Cancel", "Move to Trash",
 		nullptr, B_WIDTH_AS_USUAL, B_WARNING_ALERT);
 	if (alert->Go() != 1)
 		return;

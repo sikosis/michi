@@ -58,7 +58,7 @@ MichiApp::ReadyToRun() {
 	BMimeType project(kProjectMimeType);
 	if (!project.IsInstalled()) {
 		project.Install();
-		project.SetShortDescription("Michi project");
+		project.SetShortDescription("Michi - walk the path");
 		project.SetLongDescription("Michi project progress record");
 		project.SetPreferredApp(kAppSignature);
 	}
@@ -121,8 +121,8 @@ MichiApp::_ShowSettings() {
 void
 MichiApp::AboutRequested() {
 	BAlert* about = new BAlert("About Michi",
-		"Michi 1.0\n\nA small, native project progress tracker for Haiku.\n"
-		"Projects travel one step at a time.\n\nReleased under the MIT license.", "OK");
+		"Michi v0.1\n\nA small, native project progress tracker for Haiku.\n"
+		"Are you on the right path?\n\nReleased under the MIT license.", "OK");
 	about->Go(nullptr);
 }
 //---------------------------------------------------------------------------------------------------------------------------------//

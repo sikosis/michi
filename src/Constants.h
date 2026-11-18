@@ -3,9 +3,9 @@
 
 #include <SupportDefs.h>
 
-constexpr const char* kAppSignature = "application/x-vnd.sikosis-michi";
-constexpr const char* kProjectMimeType = "application/x-vnd.sikosis-michi-project";
-constexpr const char* kDeskbarItemName = "Michi progress";
+constexpr const char* kAppSignature = "application/x-vnd.michi";
+constexpr const char* kProjectMimeType = "application/x-vnd.michi-project";
+constexpr const char* kDeskbarItemName = "Michi";
 
 enum : uint32 {
 	kMsgShowMain = 'shmn',
