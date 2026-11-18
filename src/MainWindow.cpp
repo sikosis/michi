@@ -18,7 +18,8 @@
 
 MainWindow::MainWindow(ProjectStore& store, Settings& settings)
 	: BWindow(BRect(0, 0, 620, 460), kAppTitle, B_TITLED_WINDOW,
-		B_AUTO_UPDATE_SIZE_LIMITS), fStore(store), fSettings(settings), fWatching(false) {
+		B_AUTO_UPDATE_SIZE_LIMITS), fStore(store), fSettings(settings), fWatching(false),
+		fEmptyStateInitialised(false), fShowingEmpty(false) {
 	fList = new BListView("projects", B_SINGLE_SELECTION_LIST);
 	fList->SetInvocationMessage(new BMessage(kMsgEditProject));
 	fEmpty = new BStringView("empty", "No projects yet. Choose New to begin.");
@@ -142,17 +143,20 @@ MainWindow::_DeleteSelected() {
 void
 MainWindow::_UpdateEmptyState() {
 	bool empty = fProjects.empty();
+	if (fEmptyStateInitialised && empty == fShowingEmpty)
+		return;
+
 	if (empty) {
-		if (fEmpty->IsHidden())
+		if (fEmptyStateInitialised)
 			fEmpty->Show();
-		if (!fList->IsHidden())
-			fList->Hide();
+		fList->Hide();
 	} else {
-		if (!fEmpty->IsHidden())
-			fEmpty->Hide();
-		if (fList->IsHidden())
+		fEmpty->Hide();
+		if (fEmptyStateInitialised)
 			fList->Show();
 	}
+	fShowingEmpty = empty;
+	fEmptyStateInitialised = true;
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 

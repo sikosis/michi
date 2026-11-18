@@ -23,5 +23,7 @@ grep -q '#define MICHI_VERSION "0.3"' "$root/src/Constants.h"
 grep -q 'major = 0' "$root/resources/Michi.rdef"
 grep -q 'middle = 3' "$root/resources/Michi.rdef"
 grep -q 'src/AboutWindow.cpp' "$root/Makefile"
+grep -q 'fEmptyStateInitialised' "$root/src/MainWindow.cpp"
+grep -q 'Random Colour' "$root/src/ProjectEditor.cpp"
 
 echo "Michi static checks passed"

@@ -7,6 +7,7 @@
 #include <ColorControl.h>
 #include <GroupLayout.h>
 #include <LayoutBuilder.h>
+#include <OS.h>
 #include <ScrollView.h>
 #include <Slider.h>
 #include <StringView.h>
@@ -14,7 +15,12 @@
 #include <TextView.h>
 
 namespace {
-enum : uint32 { kSave = 'esav', kCancel = 'ecan' };
+enum : uint32 { kSave = 'esav', kCancel = 'ecan', kRandomColour = 'rcol' };
+
+constexpr uint32 kProjectColours[] = {
+	0x3b82f6ff, 0x8b5cf6ff, 0xec4899ff, 0xef4444ff,
+	0xf97316ff, 0xeab308ff, 0x22c55eff, 0x06b6d4ff
+};
 
 rgb_color Unpack(uint32 value) {
 	return {static_cast<uint8>(value >> 24), static_cast<uint8>(value >> 16),
@@ -55,6 +61,7 @@ ProjectEditor::ProjectEditor(const Project* project, uint32 defaultColor, BMesse
 
 	BButton* cancel = new BButton("Cancel", new BMessage(kCancel));
 	BButton* save = new BButton("Save", new BMessage(kSave));
+	BButton* randomColour = new BButton("Random Colour", new BMessage(kRandomColour));
 	save->MakeDefault(true);
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL, B_USE_DEFAULT_SPACING)
@@ -65,7 +72,11 @@ ProjectEditor::ProjectEditor(const Project* project, uint32 defaultColor, BMesse
 			.Add(new BStringView("notes_label", "Notes:"))
 			.Add(new BScrollView("notes_scroll", fNotes, 0, false, true), 1)
 		.End()
-		.Add(new BStringView("color_label", "Progress Colour:"))
+		.AddGroup(B_HORIZONTAL)
+			.Add(new BStringView("color_label", "Progress Colour:"))
+			.AddGlue()
+			.Add(randomColour)
+		.End()
 		.Add(fColor)
 		.AddGroup(B_HORIZONTAL)
 			.AddGlue()
@@ -83,8 +94,20 @@ ProjectEditor::MessageReceived(BMessage* message) {
 	switch (message->what) {
 		case kSave: _Save(); break;
 		case kCancel: Quit(); break;
+		case kRandomColour: _RandomiseColour(); break;
 		default: BWindow::MessageReceived(message); break;
 	}
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
+
+
+void
+ProjectEditor::_RandomiseColour() {
+	size_t count = sizeof(kProjectColours) / sizeof(kProjectColours[0]);
+	size_t index = static_cast<size_t>(system_time()) % count;
+	if (kProjectColours[index] == Pack(fColor->ValueAsColor()))
+		index = (index + 1) % count;
+	fColor->SetValue(Unpack(kProjectColours[index]));
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 

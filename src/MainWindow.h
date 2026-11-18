@@ -35,6 +35,8 @@ private:
 	BButton* fDelete;
 	node_ref fWatchedDirectory;
 	bool fWatching;
+	bool fEmptyStateInitialised;
+	bool fShowingEmpty;
 };
 
 #endif

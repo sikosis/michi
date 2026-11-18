@@ -19,6 +19,7 @@ public:
 
 private:
 	void _Save();
+	void _RandomiseColour();
 	Project fProject;
 	BMessenger fTarget;
 	BTextControl* fName;
