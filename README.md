@@ -13,7 +13,7 @@ On Haiku, run:
 make
 ```
 
-Launch `Michi` once to install its Deskbar item. Closing the main window leaves
+Launch `michi` once to install its Deskbar item. Closing the main window leaves
 the Deskbar item installed; choose **Quit** from its context menu to remove it.
 
 ## Project data

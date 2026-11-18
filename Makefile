@@ -1,8 +1,8 @@
 ## Haiku Generic Makefile ##
 
-NAME = Michi
+NAME = michi
 TYPE = APP
-APP_MIME_SIG = application/x-vnd.sikosis-michi
+APP_MIME_SIG = application/x-vnd.michi
 
 SRCS = \
 	src/main.cpp \

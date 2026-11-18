@@ -8,7 +8,8 @@ for file in Constants.h Project.h Project.cpp MainWindow.cpp DeskbarView.cpp Mic
 done
 
 grep -q -- '-std=c++17' "$root/Makefile"
-grep -q 'application/x-vnd.sikosis-michi' "$root/resources/Michi.rdef"
+grep -q '^NAME = michi$' "$root/Makefile"
+grep -q 'application/x-vnd.michi' "$root/resources/Michi.rdef"
 grep -q 'MCHI:created' "$root/src/Project.cpp"
 grep -q 'MCHI:modified' "$root/src/Project.cpp"
 grep -q 'B_SECONDARY_MOUSE_BUTTON' "$root/src/DeskbarView.cpp"

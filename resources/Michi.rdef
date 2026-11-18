@@ -1,4 +1,4 @@
-resource app_signature "application/x-vnd.sikosis-michi";
+resource app_signature "application/x-vnd.michi";
 
 resource app_flags B_SINGLE_LAUNCH;
 
