@@ -20,6 +20,7 @@
 #include <StringView.h>
 
 #include <algorithm>
+#include <ctime>
 #include <cstring>
 
 namespace {
@@ -33,11 +34,26 @@ enum : int32 {
 	kFilterAll = 0,
 	kFilterUnfinished,
 	kFilterFinished,
+	kFilterToday,
 	kFilterNewest,
 	kFilterOldest
 };
 
 constexpr int64 kMonthUsecs = 30LL * 24 * 60 * 60 * 1000000;
+
+int64
+StartOfToday() {
+	time_t now = time(nullptr);
+	struct tm localTime;
+	if (localtime_r(&now, &localTime) == nullptr)
+		return 0;
+	localTime.tm_hour = 0;
+	localTime.tm_min = 0;
+	localTime.tm_sec = 0;
+	time_t start = mktime(&localTime);
+	return start == static_cast<time_t>(-1) ? 0 : static_cast<int64>(start) * 1000000;
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
 
 class ProjectListView : public BListView {
 public:
@@ -97,6 +113,7 @@ MainWindow::MainWindow(ProjectStore& store, Settings& settings)
 	filterMenu->AddItem(FilterItem("Unfinished", kFilterUnfinished));
 	filterMenu->AddItem(FilterItem("Finished", kFilterFinished));
 	filterMenu->AddSeparatorItem();
+	filterMenu->AddItem(FilterItem("Today", kFilterToday));
 	filterMenu->AddItem(FilterItem("Newest", kFilterNewest));
 	filterMenu->AddItem(FilterItem("Oldest", kFilterOldest));
 	filterMenu->ItemAt(0)->SetMarked(true);
@@ -255,6 +272,7 @@ MainWindow::_MatchesFilter(const Project& project) const {
 	switch (fFilter) {
 		case kFilterUnfinished: return project.progress < 100;
 		case kFilterFinished: return project.progress == 100;
+		case kFilterToday: return project.modified >= StartOfToday();
 		case kFilterNewest: return project.modified >= real_time_clock_usecs() - kMonthUsecs;
 		case kFilterOldest: return project.modified < real_time_clock_usecs() - kMonthUsecs;
 		default: return true;

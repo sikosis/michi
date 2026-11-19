@@ -28,8 +28,8 @@ open that project for editing instead.
 
 The default ordering is modified time, oldest first. Settings can switch
 between created or modified time and reverse the direction. The main window can
-filter projects by completion or by whether they were modified within the last
-30 days.
+filter projects by completion, by whether they were modified today, or by
+whether they were modified within the last 30 days.
 
 Double-click a project to edit it, or right-click it for Edit and Delete actions.
 The bottom-right **Replicant** button offers two-project, five-project, and large
