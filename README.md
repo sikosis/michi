@@ -11,7 +11,12 @@ On Haiku, run:
 
 ```sh
 make
+make install
 ```
+
+`make install` copies `michi` into the user's non-packaged applications
+directory and refreshes its MIME metadata. Set `INSTALL_DIR` to override the
+destination.
 
 Launch `michi` once to install its Deskbar item. Closing the main window leaves
 the Deskbar item installed; hovering over it shows the current project count.

@@ -34,6 +34,14 @@ LINKER_FLAGS =
 APP_VERSION =
 DRIVER_PATH =
 
+INSTALL_DIR ?= $(shell findpaths -r non-packaged B_FIND_PATH_APPS_DIRECTORY)
+
 DEVEL_DIRECTORY := \
 	$(shell findpaths -r "makefile_engine" B_FIND_PATH_DEVELOP_DIRECTORY)
 include $(DEVEL_DIRECTORY)/etc/makefile-engine
+
+.PHONY: install
+install: $(NAME)
+	mkdir -p "$(INSTALL_DIR)"
+	cp -f "$(NAME)" "$(INSTALL_DIR)/$(NAME)"
+	mimeset -f "$(INSTALL_DIR)/$(NAME)"
