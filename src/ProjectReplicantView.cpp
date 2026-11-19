@@ -70,8 +70,8 @@ ProjectReplicantView::Archive(BMessage* archive, bool deep) const {
 void
 ProjectReplicantView::AttachedToWindow() {
 	BView::AttachedToWindow();
-	SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
-	SetLowUIColor(B_PANEL_BACKGROUND_COLOR);
+	SetViewColor(B_TRANSPARENT_COLOR);
+	SetLowColor(B_TRANSPARENT_COLOR);
 	_StartWatching();
 	_Reload();
 }
@@ -82,8 +82,17 @@ void
 ProjectReplicantView::Draw(BRect updateRect) {
 	(void)updateRect;
 	BRect bounds(Bounds());
-	SetHighColor(tint_color(ui_color(B_PANEL_BACKGROUND_COLOR), B_DARKEN_1_TINT));
-	StrokeRect(bounds);
+	SetDrawingMode(B_OP_ALPHA);
+	SetBlendingMode(B_PIXEL_ALPHA, B_ALPHA_OVERLAY);
+	BRect panel(bounds.InsetByCopy(1, 1));
+	rgb_color background = ui_color(B_PANEL_BACKGROUND_COLOR);
+	background.alpha = 215;
+	SetHighColor(background);
+	FillRoundRect(panel, 8, 8);
+	rgb_color border = tint_color(ui_color(B_PANEL_BACKGROUND_COLOR), B_DARKEN_2_TINT);
+	border.alpha = 230;
+	SetHighColor(border);
+	StrokeRoundRect(panel, 8, 8);
 
 	SetFont(be_bold_font);
 	SetHighColor(ui_color(B_PANEL_TEXT_COLOR));
@@ -105,7 +114,10 @@ ProjectReplicantView::Draw(BRect updateRect) {
 		DrawString(percent.String(), BPoint(bounds.right - kInset - percentWidth, y + 14));
 
 		BRect bar(kInset, y + 23, bounds.right - kInset, y + 29);
-		SetHighColor(tint_color(ui_color(B_PANEL_BACKGROUND_COLOR), B_DARKEN_2_TINT));
+		rgb_color barBackground
+			= tint_color(ui_color(B_PANEL_BACKGROUND_COLOR), B_DARKEN_2_TINT);
+		barBackground.alpha = 160;
+		SetHighColor(barBackground);
 		FillRoundRect(bar, 3, 3);
 		if (project.progress > 0) {
 			bar.right = bar.left + bar.Width() * project.progress / 100.0f;
