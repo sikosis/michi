@@ -3,7 +3,7 @@
 
 #include <SupportDefs.h>
 
-#define MICHI_VERSION "0.4"
+#define MICHI_VERSION "0.41"
 
 constexpr const char* kAppSignature = "application/x-vnd.michi";
 constexpr const char* kProjectMimeType = "application/x-vnd.michi-project";

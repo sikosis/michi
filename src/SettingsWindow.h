@@ -13,6 +13,8 @@ class SettingsWindow : public BWindow {
 public:
 	SettingsWindow(const Settings& settings, BMessenger target);
 	void MessageReceived(BMessage* message) override;
+	bool QuitRequested() override;
+	void SetSettings(const Settings& settings);
 
 private:
 	Settings fSettings;

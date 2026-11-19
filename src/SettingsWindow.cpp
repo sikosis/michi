@@ -75,7 +75,7 @@ SettingsWindow::SettingsWindow(const Settings& settings, BMessenger target)
 void
 SettingsWindow::MessageReceived(BMessage* message) {
 	if (message->what == kCancel) {
-		Quit();
+		Hide();
 		return;
 	}
 	if (message->what == kMsgSaveSettings) {
@@ -90,9 +90,32 @@ SettingsWindow::MessageReceived(BMessage* message) {
 		update.AddBool("ascending", fSettings.ascending);
 		update.AddUInt32("default_color", fSettings.defaultColor);
 		fTarget.SendMessage(&update);
-		Quit();
+		Hide();
 		return;
 	}
 	BWindow::MessageReceived(message);
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
+
+
+bool
+SettingsWindow::QuitRequested() {
+	Hide();
+	return false;
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
+
+
+void
+SettingsWindow::SetSettings(const Settings& settings) {
+	fSettings = settings;
+	BMenuItem* field = fField->Menu()->ItemAt(
+		settings.sortField == SortField::Created ? 0 : 1);
+	if (field != nullptr)
+		field->SetMarked(true);
+	BMenuItem* direction = fDirection->Menu()->ItemAt(settings.ascending ? 0 : 1);
+	if (direction != nullptr)
+		direction->SetMarked(true);
+	fColor->SetValue(Unpack(settings.defaultColor));
 }
 //---------------------------------------------------------------------------------------------------------------------------------//

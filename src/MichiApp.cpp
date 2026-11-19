@@ -124,6 +124,9 @@ MichiApp::_ShowSettings() {
 	for (int32 index = 0; index < CountWindows(); ++index) {
 		SettingsWindow* window = dynamic_cast<SettingsWindow*>(WindowAt(index));
 		if (window != nullptr && window->Lock()) {
+			window->SetSettings(fSettings);
+			if (window->IsHidden())
+				window->Show();
 			window->Activate(true);
 			window->Unlock();
 			return;
