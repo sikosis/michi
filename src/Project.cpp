@@ -106,6 +106,23 @@ ProjectStore::LoadAll(std::vector<Project>& projects) const {
 
 
 status_t
+ProjectStore::FindByName(const BString& name, Project& project) const {
+	std::vector<Project> projects;
+	status_t status = LoadAll(projects);
+	if (status != B_OK)
+		return status;
+	for (const Project& candidate : projects) {
+		if (candidate.name.ICompare(name) == 0) {
+			project = candidate;
+			return B_OK;
+		}
+	}
+	return B_ENTRY_NOT_FOUND;
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
+
+
+status_t
 ProjectStore::_Read(const entry_ref& ref, Project& project) const {
 	BFile file(&ref, B_READ_ONLY);
 	status_t status = file.InitCheck();
@@ -141,6 +158,12 @@ ProjectStore::Save(Project& project) const {
 		|| project.progress > 100) {
 		return B_BAD_VALUE;
 	}
+	Project existing;
+	status_t status = FindByName(project.name, existing);
+	if (status == B_OK && existing.id != project.id)
+		return B_NAME_IN_USE;
+	if (status != B_OK && status != B_ENTRY_NOT_FOUND)
+		return status;
 
 	if (project.id.IsEmpty()) {
 		project.id.SetToFormat("project-%" B_PRId64 "-%" B_PRId32,
@@ -150,7 +173,7 @@ ProjectStore::Save(Project& project) const {
 	project.modified = Now();
 
 	BPath path(fDirectoryPath);
-	status_t status = path.Append(project.id.String());
+	status = path.Append(project.id.String());
 	if (status != B_OK)
 		return status;
 	BFile file(path.Path(), B_READ_WRITE | B_CREATE_FILE | B_ERASE_FILE);

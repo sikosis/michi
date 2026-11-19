@@ -40,5 +40,8 @@ grep -q 'B_SECONDARY_MOUSE_BUTTON' "$root/src/MainWindow.cpp"
 grep -q 'Small — 2 projects' "$root/src/MainWindow.cpp"
 grep -q 'Medium — 5 projects' "$root/src/MainWindow.cpp"
 grep -q 'Replicant" B_UTF8_ELLIPSIS' "$root/src/MainWindow.cpp"
+grep -q 'FindByName' "$root/src/Project.cpp"
+grep -q 'Edit Existing' "$root/src/MichiApp.cpp"
+grep -q 'B_NAME_IN_USE' "$root/src/Project.cpp"
 
 echo "Michi static checks passed"

@@ -41,6 +41,7 @@ public:
 	//---------------------------------------------------------------------------------------------------------------------------------//
 
 	status_t LoadAll(std::vector<Project>& projects) const;
+	status_t FindByName(const BString& name, Project& project) const;
 	status_t Save(Project& project) const;
 	status_t MoveToTrash(const Project& project) const;
 

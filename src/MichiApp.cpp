@@ -4,6 +4,7 @@
 #include "Constants.h"
 #include "DeskbarView.h"
 #include "MainWindow.h"
+#include "ProjectEditor.h"
 #include "SettingsWindow.h"
 
 #include <Alert.h>
@@ -178,7 +179,19 @@ MichiApp::_SaveProject(BMessage* message) {
 	message->FindInt32("progress", &project.progress);
 	message->FindUInt32("color", &project.color);
 	message->FindInt64("created", &project.created);
-	status_t status = fStore.Save(project);
+	Project existing;
+	status_t status = fStore.FindByName(project.name, existing);
+	if (status == B_OK && existing.id != project.id) {
+		BString prompt;
+		prompt.SetToFormat("A project named ‘%s’ already exists. Edit the existing project instead?",
+			project.name.String());
+		BAlert* alert = new BAlert("Duplicate Project", prompt.String(), "Cancel",
+			"Edit Existing", nullptr, B_WIDTH_AS_USUAL, B_WARNING_ALERT);
+		if (alert->Go() == 1)
+			(new ProjectEditor(&existing, fSettings.defaultColor, BMessenger(this)))->Show();
+		return;
+	}
+	status = fStore.Save(project);
 	if (status != B_OK) {
 		BString error("Could not save the project: ");
 		error << strerror(status);
