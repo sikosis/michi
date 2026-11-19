@@ -11,6 +11,7 @@ SRCS = \
 	src/Project.cpp \
 	src/ProjectItem.cpp \
 	src/ProjectEditor.cpp \
+	src/ProjectReplicantView.cpp \
 	src/SettingsWindow.cpp \
 	src/MainWindow.cpp \
 	src/DeskbarView.cpp

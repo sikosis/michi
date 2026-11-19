@@ -13,6 +13,7 @@ constexpr const char* kSettingsWindowTitle = "michi v" MICHI_VERSION " — Setti
 constexpr const char* kNewProjectWindowTitle = "michi v" MICHI_VERSION " — New Project";
 constexpr const char* kEditProjectWindowTitle = "michi v" MICHI_VERSION " — Edit Project";
 constexpr const char* kAboutWindowTitle = "michi v" MICHI_VERSION " — About";
+constexpr const char* kReplicantWindowTitle = "michi v" MICHI_VERSION " — Replicant";
 
 enum : uint32 {
 	kMsgShowMain = 'shmn',
@@ -23,6 +24,7 @@ enum : uint32 {
 	kMsgEditProject = 'edtp',
 	kMsgDeleteProject = 'delp',
 	kMsgFilterProjects = 'fltr',
+	kMsgShowReplicant = 'repl',
 	kMsgSaveProject = 'savp',
 	kMsgProjectsChanged = 'prch',
 	kMsgSaveSettings = 'svst',

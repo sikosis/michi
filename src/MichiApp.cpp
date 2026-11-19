@@ -82,10 +82,14 @@ MichiApp::ArgvReceived(int32, char**) {
 void
 MichiApp::_InstallDeskbarItem() {
 	BDeskbar deskbar;
-	if (!deskbar.IsRunning() || deskbar.HasItem(kDeskbarItemName))
+	if (!deskbar.IsRunning())
 		return;
+	status_t status = B_OK;
+	if (deskbar.HasItem(kDeskbarItemName))
+		status = deskbar.RemoveItem(kDeskbarItemName);
 	app_info info;
-	status_t status = GetAppInfo(&info);
+	if (status == B_OK)
+		status = GetAppInfo(&info);
 	if (status == B_OK)
 		status = deskbar.AddItem(&info.ref);
 	if (status != B_OK) {

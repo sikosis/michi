@@ -3,6 +3,7 @@
 #include "Constants.h"
 #include "ProjectEditor.h"
 #include "ProjectItem.h"
+#include "ProjectReplicantView.h"
 
 #include <Alert.h>
 #include <Application.h>
@@ -49,6 +50,7 @@ MainWindow::MainWindow(ProjectStore& store, Settings& settings)
 	fEmpty = new BStringView("empty", "No projects yet. Choose New to begin.");
 	fEmpty->SetAlignment(B_ALIGN_CENTER);
 	BButton* add = new BButton("New", new BMessage(kMsgNewProject));
+	BButton* replicant = new BButton("Replicant", new BMessage(kMsgShowReplicant));
 	fEdit = new BButton("Edit", new BMessage(kMsgEditProject));
 	fDelete = new BButton("Delete", new BMessage(kMsgDeleteProject));
 	BPopUpMenu* filterMenu = new BPopUpMenu("project filter");
@@ -69,6 +71,7 @@ MainWindow::MainWindow(ProjectStore& store, Settings& settings)
 		.AddGroup(B_HORIZONTAL)
 			.Add(new BStringView("heading", "Projects"))
 			.AddGlue()
+			.Add(replicant)
 			.Add(filterField)
 		.End()
 		.Add(fEmpty)
@@ -140,6 +143,14 @@ MainWindow::MessageReceived(BMessage* message) {
 			break;
 		}
 		case kMsgDeleteProject: _DeleteSelected(); break;
+		case kMsgShowReplicant: {
+			BWindow* window = new BWindow(BRect(0, 0, 340, 420), kReplicantWindowTitle,
+				B_TITLED_WINDOW, B_NOT_ZOOMABLE | B_NOT_RESIZABLE | B_CLOSE_ON_ESCAPE);
+			window->AddChild(new ProjectReplicantView(window->Bounds()));
+			window->CenterOnScreen();
+			window->Show();
+			break;
+		}
 		case kMsgFilterProjects:
 			if (message->FindInt32("filter", &fFilter) == B_OK)
 				Reload();
