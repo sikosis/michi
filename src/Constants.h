@@ -23,6 +23,7 @@ enum : uint32 {
 	kMsgNewProject = 'newp',
 	kMsgEditProject = 'edtp',
 	kMsgDeleteProject = 'delp',
+	kMsgProjectContextMenu = 'pcmn',
 	kMsgFilterProjects = 'fltr',
 	kMsgShowReplicant = 'repl',
 	kMsgSaveProject = 'savp',

@@ -29,9 +29,11 @@ between created or modified time and reverse the direction. The main window can
 filter projects by completion or by whether they were modified within the last
 30 days.
 
-The **Replicant** button opens a read-only project display. Enable **Show
-Replicants** in Deskbar, then drag its corner handle onto the Desktop. The
-replicant watches the project directory and refreshes when projects change.
+Double-click a project to edit it, or right-click it for Edit and Delete actions.
+The bottom-right **Replicant** button offers a compact two-project display and a
+larger read-only display. Enable **Show Replicants** in Deskbar, then drag the
+display's corner handle onto the Desktop. Replicants watch the project directory
+and refresh when projects change.
 
 The SVG in `artwork/` is the editable icon source. The Deskbar item draws the
 same winding-path mark with native Haiku drawing calls so it remains sharp at

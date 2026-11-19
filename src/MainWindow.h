@@ -24,6 +24,9 @@ private:
 	Project* _SelectedProject();
 	void _OpenEditor(const Project* project);
 	void _DeleteSelected();
+	void _ShowProjectMenu(BPoint where);
+	void _ShowReplicant(float width, float height);
+	void _ShowReplicantMenu();
 	bool _MatchesFilter(const Project& project) const;
 	void _UpdateEmptyState();
 
@@ -32,8 +35,7 @@ private:
 	std::vector<Project> fProjects;
 	BListView* fList;
 	BStringView* fEmpty;
-	BButton* fEdit;
-	BButton* fDelete;
+	BButton* fReplicant;
 	node_ref fWatchedDirectory;
 	bool fWatching;
 	bool fEmptyStateInitialised;

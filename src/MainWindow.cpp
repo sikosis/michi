@@ -12,6 +12,7 @@
 #include <ListView.h>
 #include <MenuField.h>
 #include <MenuItem.h>
+#include <Messenger.h>
 #include <NodeMonitor.h>
 #include <OS.h>
 #include <PopUpMenu.h>
@@ -22,6 +23,11 @@
 #include <cstring>
 
 namespace {
+enum : uint32 {
+	kSmallReplicant = 'rpsm',
+	kLargeReplicant = 'rplg'
+};
+
 enum : int32 {
 	kFilterAll = 0,
 	kFilterUnfinished,
@@ -31,6 +37,37 @@ enum : int32 {
 };
 
 constexpr int64 kMonthUsecs = 30LL * 24 * 60 * 60 * 1000000;
+
+class ProjectListView : public BListView {
+public:
+	ProjectListView();
+	void MouseDown(BPoint where) override;
+};
+
+ProjectListView::ProjectListView()
+	: BListView("projects", B_SINGLE_SELECTION_LIST) {
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
+
+
+void
+ProjectListView::MouseDown(BPoint where) {
+	int32 buttons = 0;
+	if (Window() != nullptr && Window()->CurrentMessage() != nullptr)
+		Window()->CurrentMessage()->FindInt32("buttons", &buttons);
+	if ((buttons & B_SECONDARY_MOUSE_BUTTON) != 0) {
+		int32 index = IndexOf(where);
+		if (index >= 0) {
+			Select(index);
+			BMessage message(kMsgProjectContextMenu);
+			message.AddPoint("where", ConvertToScreen(where));
+			BMessenger(Window()).SendMessage(&message);
+		}
+		return;
+	}
+	BListView::MouseDown(where);
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
 
 BMenuItem*
 FilterItem(const char* label, int32 filter) {
@@ -45,14 +82,13 @@ MainWindow::MainWindow(ProjectStore& store, Settings& settings)
 	: BWindow(BRect(0, 0, 620, 460), kAppTitle, B_TITLED_WINDOW,
 		B_AUTO_UPDATE_SIZE_LIMITS), fStore(store), fSettings(settings), fWatching(false),
 		fEmptyStateInitialised(false), fShowingEmpty(false), fFilter(kFilterAll) {
-	fList = new BListView("projects", B_SINGLE_SELECTION_LIST);
+	fList = new ProjectListView();
 	fList->SetInvocationMessage(new BMessage(kMsgEditProject));
 	fEmpty = new BStringView("empty", "No projects yet. Choose New to begin.");
 	fEmpty->SetAlignment(B_ALIGN_CENTER);
 	BButton* add = new BButton("New", new BMessage(kMsgNewProject));
-	BButton* replicant = new BButton("Replicant", new BMessage(kMsgShowReplicant));
-	fEdit = new BButton("Edit", new BMessage(kMsgEditProject));
-	fDelete = new BButton("Delete", new BMessage(kMsgDeleteProject));
+	fReplicant = new BButton("Replicant" B_UTF8_ELLIPSIS,
+		new BMessage(kMsgShowReplicant));
 	BPopUpMenu* filterMenu = new BPopUpMenu("project filter");
 	filterMenu->SetRadioMode(true);
 	filterMenu->SetLabelFromMarked(true);
@@ -71,7 +107,6 @@ MainWindow::MainWindow(ProjectStore& store, Settings& settings)
 		.AddGroup(B_HORIZONTAL)
 			.Add(new BStringView("heading", "Projects"))
 			.AddGlue()
-			.Add(replicant)
 			.Add(filterField)
 		.End()
 		.Add(fEmpty)
@@ -79,8 +114,7 @@ MainWindow::MainWindow(ProjectStore& store, Settings& settings)
 		.AddGroup(B_HORIZONTAL)
 			.Add(add)
 			.AddGlue()
-			.Add(fEdit)
-			.Add(fDelete)
+			.Add(fReplicant)
 		.End();
 	SetSizeLimits(430, B_SIZE_UNLIMITED, 280, B_SIZE_UNLIMITED);
 	CenterOnScreen();
@@ -143,14 +177,13 @@ MainWindow::MessageReceived(BMessage* message) {
 			break;
 		}
 		case kMsgDeleteProject: _DeleteSelected(); break;
-		case kMsgShowReplicant: {
-			BWindow* window = new BWindow(BRect(0, 0, 340, 420), kReplicantWindowTitle,
-				B_TITLED_WINDOW, B_NOT_ZOOMABLE | B_NOT_RESIZABLE | B_CLOSE_ON_ESCAPE);
-			window->AddChild(new ProjectReplicantView(window->Bounds()));
-			window->CenterOnScreen();
-			window->Show();
+		case kMsgProjectContextMenu: {
+			BPoint where;
+			if (message->FindPoint("where", &where) == B_OK)
+				_ShowProjectMenu(where);
 			break;
 		}
+		case kMsgShowReplicant: _ShowReplicantMenu(); break;
 		case kMsgFilterProjects:
 			if (message->FindInt32("filter", &fFilter) == B_OK)
 				Reload();
@@ -159,6 +192,56 @@ MainWindow::MessageReceived(BMessage* message) {
 		case kMsgSettingsChanged: Reload(); break;
 		default: BWindow::MessageReceived(message); break;
 	}
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
+
+
+void
+MainWindow::_ShowProjectMenu(BPoint where) {
+	BPopUpMenu* menu = new BPopUpMenu("project actions", false, false);
+	menu->AddItem(new BMenuItem("Edit", new BMessage(kMsgEditProject)));
+	menu->AddItem(new BMenuItem("Delete" B_UTF8_ELLIPSIS,
+		new BMessage(kMsgDeleteProject)));
+	BMenuItem* selected = menu->Go(where, false, true);
+	uint32 what = selected != nullptr && selected->Message() != nullptr
+		? selected->Message()->what : 0;
+	delete menu;
+	if (what == kMsgEditProject) {
+		Project* project = _SelectedProject();
+		if (project != nullptr)
+			_OpenEditor(project);
+	} else if (what == kMsgDeleteProject) {
+		_DeleteSelected();
+	}
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
+
+
+void
+MainWindow::_ShowReplicant(float width, float height) {
+	BWindow* window = new BWindow(BRect(0, 0, width, height), kReplicantWindowTitle,
+		B_TITLED_WINDOW, B_NOT_ZOOMABLE | B_NOT_RESIZABLE | B_CLOSE_ON_ESCAPE);
+	window->AddChild(new ProjectReplicantView(window->Bounds()));
+	window->CenterOnScreen();
+	window->Show();
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
+
+
+void
+MainWindow::_ShowReplicantMenu() {
+	BPopUpMenu* menu = new BPopUpMenu("replicant size", false, false);
+	menu->AddItem(new BMenuItem("Small — 2 projects", new BMessage(kSmallReplicant)));
+	menu->AddItem(new BMenuItem("Large", new BMessage(kLargeReplicant)));
+	BPoint where = fReplicant->ConvertToScreen(BPoint(0, fReplicant->Bounds().top));
+	BMenuItem* selected = menu->Go(where, false, true);
+	uint32 what = selected != nullptr && selected->Message() != nullptr
+		? selected->Message()->what : 0;
+	delete menu;
+	if (what == kSmallReplicant)
+		_ShowReplicant(300, 150);
+	else if (what == kLargeReplicant)
+		_ShowReplicant(340, 420);
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
