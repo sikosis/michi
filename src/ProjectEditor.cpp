@@ -5,11 +5,13 @@
 #include <Alert.h>
 #include <Button.h>
 #include <ColorControl.h>
+#include <Font.h>
 #include <GroupLayout.h>
 #include <LayoutBuilder.h>
 #include <OS.h>
 #include <ScrollView.h>
 #include <Slider.h>
+#include <Size.h>
 #include <StringView.h>
 #include <TextControl.h>
 #include <TextView.h>
@@ -48,14 +50,21 @@ BButton*
 ProgressButton(const char* label, uint32 what, int32 value) {
 	BMessage* message = new BMessage(what);
 	message->AddInt32("value", value);
-	return new BButton(label, message);
+	BButton* button = new BButton(label, message);
+	BFont font(*be_plain_font);
+	font.SetSize(std::max(9.0f, be_plain_font->Size() - 2.0f));
+	button->SetFont(&font);
+	float width = what == kSetProgress ? 48.0f : 40.0f;
+	button->SetExplicitMinSize(BSize(width, 22));
+	button->SetExplicitMaxSize(BSize(width, 22));
+	return button;
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 }
 
 ProjectEditor::ProjectEditor(const Project* project, uint32 defaultColor, BMessenger target)
-	: BWindow(BRect(0, 0, 500, 540),
+	: BWindow(BRect(0, 0, 460, 490),
 		project == nullptr ? kNewProjectWindowTitle : kEditProjectWindowTitle,
 		B_TITLED_WINDOW, B_NOT_ZOOMABLE | B_AUTO_UPDATE_SIZE_LIMITS),
 	  fTarget(target) {
@@ -86,19 +95,23 @@ ProjectEditor::ProjectEditor(const Project* project, uint32 defaultColor, BMesse
 		.Add(fName)
 		.Add(fProgress)
 		.AddGroup(B_HORIZONTAL, B_USE_SMALL_SPACING)
+			.AddGlue()
 			.Add(ProgressButton("0%", kSetProgress, 0))
 			.Add(ProgressButton("25%", kSetProgress, 25))
 			.Add(ProgressButton("50%", kSetProgress, 50))
 			.Add(ProgressButton("75%", kSetProgress, 75))
 			.Add(ProgressButton("100%", kSetProgress, 100))
+			.AddGlue()
 		.End()
 		.AddGroup(B_HORIZONTAL, B_USE_SMALL_SPACING)
+			.AddGlue()
 			.Add(ProgressButton("-20", kAdjustProgress, -20))
 			.Add(ProgressButton("-10", kAdjustProgress, -10))
 			.Add(ProgressButton("-5", kAdjustProgress, -5))
 			.Add(ProgressButton("+5", kAdjustProgress, 5))
 			.Add(ProgressButton("+10", kAdjustProgress, 10))
 			.Add(ProgressButton("+20", kAdjustProgress, 20))
+			.AddGlue()
 		.End()
 		.AddGroup(B_VERTICAL, B_USE_SMALL_SPACING)
 			.Add(new BStringView("notes_label", "Notes:"))
