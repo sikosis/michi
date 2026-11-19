@@ -14,8 +14,16 @@
 #include <TextControl.h>
 #include <TextView.h>
 
+#include <algorithm>
+
 namespace {
-enum : uint32 { kSave = 'esav', kCancel = 'ecan', kRandomColour = 'rcol' };
+enum : uint32 {
+	kSave = 'esav',
+	kCancel = 'ecan',
+	kRandomColour = 'rcol',
+	kSetProgress = 'prst',
+	kAdjustProgress = 'prad'
+};
 
 constexpr uint32 kProjectColours[] = {
 	0x3b82f6ff, 0x8b5cf6ff, 0xec4899ff, 0xef4444ff,
@@ -35,10 +43,19 @@ uint32 Pack(rgb_color color) {
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
+
+BButton*
+ProgressButton(const char* label, uint32 what, int32 value) {
+	BMessage* message = new BMessage(what);
+	message->AddInt32("value", value);
+	return new BButton(label, message);
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
+
 }
 
 ProjectEditor::ProjectEditor(const Project* project, uint32 defaultColor, BMessenger target)
-	: BWindow(BRect(0, 0, 500, 470),
+	: BWindow(BRect(0, 0, 500, 540),
 		project == nullptr ? kNewProjectWindowTitle : kEditProjectWindowTitle,
 		B_TITLED_WINDOW, B_NOT_ZOOMABLE | B_AUTO_UPDATE_SIZE_LIMITS),
 	  fTarget(target) {
@@ -68,6 +85,21 @@ ProjectEditor::ProjectEditor(const Project* project, uint32 defaultColor, BMesse
 		.SetInsets(B_USE_WINDOW_INSETS)
 		.Add(fName)
 		.Add(fProgress)
+		.AddGroup(B_HORIZONTAL, B_USE_SMALL_SPACING)
+			.Add(ProgressButton("0%", kSetProgress, 0))
+			.Add(ProgressButton("25%", kSetProgress, 25))
+			.Add(ProgressButton("50%", kSetProgress, 50))
+			.Add(ProgressButton("75%", kSetProgress, 75))
+			.Add(ProgressButton("100%", kSetProgress, 100))
+		.End()
+		.AddGroup(B_HORIZONTAL, B_USE_SMALL_SPACING)
+			.Add(ProgressButton("-20", kAdjustProgress, -20))
+			.Add(ProgressButton("-10", kAdjustProgress, -10))
+			.Add(ProgressButton("-5", kAdjustProgress, -5))
+			.Add(ProgressButton("+5", kAdjustProgress, 5))
+			.Add(ProgressButton("+10", kAdjustProgress, 10))
+			.Add(ProgressButton("+20", kAdjustProgress, 20))
+		.End()
 		.AddGroup(B_VERTICAL, B_USE_SMALL_SPACING)
 			.Add(new BStringView("notes_label", "Notes:"))
 			.Add(new BScrollView("notes_scroll", fNotes, 0, false, true), 1)
@@ -95,6 +127,18 @@ ProjectEditor::MessageReceived(BMessage* message) {
 		case kSave: _Save(); break;
 		case kCancel: Quit(); break;
 		case kRandomColour: _RandomiseColour(); break;
+		case kSetProgress: {
+			int32 value;
+			if (message->FindInt32("value", &value) == B_OK)
+				fProgress->SetValue(value);
+			break;
+		}
+		case kAdjustProgress: {
+			int32 value;
+			if (message->FindInt32("value", &value) == B_OK)
+				fProgress->SetValue(std::clamp(fProgress->Value() + value, 0, 100));
+			break;
+		}
 		default: BWindow::MessageReceived(message); break;
 	}
 }

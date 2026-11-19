@@ -43,5 +43,8 @@ grep -q 'Replicant" B_UTF8_ELLIPSIS' "$root/src/MainWindow.cpp"
 grep -q 'FindByName' "$root/src/Project.cpp"
 grep -q 'Edit Existing' "$root/src/MichiApp.cpp"
 grep -q 'B_NAME_IN_USE' "$root/src/Project.cpp"
+grep -q 'ProgressButton("25%"' "$root/src/ProjectEditor.cpp"
+grep -q 'ProgressButton("+20"' "$root/src/ProjectEditor.cpp"
+grep -q 'std::clamp' "$root/src/ProjectEditor.cpp"
 
 echo "Michi static checks passed"
