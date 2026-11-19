@@ -125,7 +125,7 @@ DeskbarView::_UpdateToolTip() {
 	ProjectStore store;
 	std::vector<Project> projects;
 	if (store.LoadAll(projects) != B_OK) {
-		SetToolTip("Michi projects unavailable");
+		SetToolTip("michi projects unavailable");
 		return;
 	}
 
@@ -143,7 +143,7 @@ DeskbarView::_ShowMenu(BPoint where) {
 	menu->AddItem(new BMenuItem("Settings" B_UTF8_ELLIPSIS,
 		new BMessage(kMsgShowSettings)));
 	menu->AddSeparatorItem();
-	menu->AddItem(new BMenuItem("About Michi" B_UTF8_ELLIPSIS,
+	menu->AddItem(new BMenuItem("About michi" B_UTF8_ELLIPSIS,
 		new BMessage(kMsgShowAbout)));
 	menu->AddItem(new BMenuItem("Quit", new BMessage(kMsgDeskbarQuit)));
 	BMenuItem* selected = menu->Go(ConvertToScreen(where), false, true);

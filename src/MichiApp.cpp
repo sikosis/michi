@@ -63,7 +63,7 @@ MichiApp::ReadyToRun() {
 	if (!project.IsInstalled()) {
 		project.Install();
 		project.SetShortDescription("Michi - walk the path");
-		project.SetLongDescription("Michi project progress record");
+		project.SetLongDescription("michi project progress record");
 		project.SetPreferredApp(kAppSignature);
 	}
 	RegisterProjectAttributes(project);

@@ -29,7 +29,7 @@ Unpack(uint32 value) {
 }
 
 ProjectReplicantView::ProjectReplicantView(BRect frame)
-	: BView(frame, "Michi project display", B_FOLLOW_NONE,
+	: BView(frame, "michi project display", B_FOLLOW_NONE,
 		B_WILL_DRAW | B_FRAME_EVENTS), fWatching(false) {
 	_AddDragger();
 }
@@ -87,7 +87,7 @@ ProjectReplicantView::Draw(BRect updateRect) {
 
 	SetFont(be_bold_font);
 	SetHighColor(ui_color(B_PANEL_TEXT_COLOR));
-	DrawString("michi projects", BPoint(kInset, kInset + be_bold_font->Size()));
+	DrawString("projects", BPoint(kInset, kInset + be_bold_font->Size()));
 	SetFont(be_plain_font);
 
 	float y = kHeaderHeight;

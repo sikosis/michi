@@ -25,6 +25,7 @@
 namespace {
 enum : uint32 {
 	kSmallReplicant = 'rpsm',
+	kMediumReplicant = 'rpmd',
 	kLargeReplicant = 'rplg'
 };
 
@@ -232,6 +233,7 @@ void
 MainWindow::_ShowReplicantMenu() {
 	BPopUpMenu* menu = new BPopUpMenu("replicant size", false, false);
 	menu->AddItem(new BMenuItem("Small — 2 projects", new BMessage(kSmallReplicant)));
+	menu->AddItem(new BMenuItem("Medium — 5 projects", new BMessage(kMediumReplicant)));
 	menu->AddItem(new BMenuItem("Large", new BMessage(kLargeReplicant)));
 	BPoint where = fReplicant->ConvertToScreen(BPoint(0, fReplicant->Bounds().top));
 	BMenuItem* selected = menu->Go(where, false, true);
@@ -240,6 +242,8 @@ MainWindow::_ShowReplicantMenu() {
 	delete menu;
 	if (what == kSmallReplicant)
 		_ShowReplicant(300, 150);
+	else if (what == kMediumReplicant)
+		_ShowReplicant(320, 270);
 	else if (what == kLargeReplicant)
 		_ShowReplicant(340, 420);
 }
