@@ -1,6 +1,7 @@
 #include "DeskbarView.h"
 
 #include "Constants.h"
+#include "Project.h"
 
 #include <ClassInfo.h>
 #include <Deskbar.h>
@@ -9,6 +10,7 @@
 #include <Messenger.h>
 #include <PopUpMenu.h>
 #include <Roster.h>
+#include <String.h>
 #include <Window.h>
 
 #include <algorithm>
@@ -49,7 +51,7 @@ DeskbarView::AttachedToWindow() {
 	BView::AttachedToWindow();
 	SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 	SetLowUIColor(B_PANEL_BACKGROUND_COLOR);
-	SetToolTip("Michi projects");
+	_UpdateToolTip();
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
@@ -99,12 +101,38 @@ DeskbarView::MouseDown(BPoint where) {
 
 
 void
+DeskbarView::MouseMoved(BPoint where, uint32 transit, const BMessage* dragMessage) {
+	if (transit == B_ENTERED_VIEW)
+		_UpdateToolTip();
+	BView::MouseMoved(where, transit, dragMessage);
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
+
+
+void
 DeskbarView::_Send(uint32 what) {
 	BMessage message(what);
 	BMessenger app(kAppSignature);
 	if (app.IsValid() && app.SendMessage(&message) == B_OK)
 		return;
 	be_roster->Launch(kAppSignature, &message);
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
+
+
+void
+DeskbarView::_UpdateToolTip() {
+	ProjectStore store;
+	std::vector<Project> projects;
+	if (store.LoadAll(projects) != B_OK) {
+		SetToolTip("Michi projects unavailable");
+		return;
+	}
+
+	BString text;
+	text.SetToFormat("Michi — %zu project%s", projects.size(),
+		projects.size() == 1 ? "" : "s");
+	SetToolTip(text.String());
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 

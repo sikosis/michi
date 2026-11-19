@@ -24,6 +24,7 @@ private:
 	Project* _SelectedProject();
 	void _OpenEditor(const Project* project);
 	void _DeleteSelected();
+	bool _MatchesFilter(const Project& project) const;
 	void _UpdateEmptyState();
 
 	ProjectStore& fStore;
@@ -37,6 +38,7 @@ private:
 	bool fWatching;
 	bool fEmptyStateInitialised;
 	bool fShowingEmpty;
+	int32 fFilter;
 };
 
 #endif

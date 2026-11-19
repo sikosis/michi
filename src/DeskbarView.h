@@ -14,10 +14,12 @@ public:
 	void AttachedToWindow() override;
 	void Draw(BRect update) override;
 	void MouseDown(BPoint where) override;
+	void MouseMoved(BPoint where, uint32 transit, const BMessage* dragMessage) override;
 
 private:
 	void _Send(uint32 what);
 	void _ShowMenu(BPoint where);
+	void _UpdateToolTip();
 };
 
 extern "C" _EXPORT BView* instantiate_deskbar_item(float maxWidth, float maxHeight);

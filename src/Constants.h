@@ -22,6 +22,7 @@ enum : uint32 {
 	kMsgNewProject = 'newp',
 	kMsgEditProject = 'edtp',
 	kMsgDeleteProject = 'delp',
+	kMsgFilterProjects = 'fltr',
 	kMsgSaveProject = 'savp',
 	kMsgProjectsChanged = 'prch',
 	kMsgSaveSettings = 'svst',

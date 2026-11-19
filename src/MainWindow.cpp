@@ -9,17 +9,41 @@
 #include <Button.h>
 #include <LayoutBuilder.h>
 #include <ListView.h>
+#include <MenuField.h>
+#include <MenuItem.h>
 #include <NodeMonitor.h>
+#include <OS.h>
+#include <PopUpMenu.h>
 #include <ScrollView.h>
 #include <StringView.h>
 
 #include <algorithm>
 #include <cstring>
 
+namespace {
+enum : int32 {
+	kFilterAll = 0,
+	kFilterUnfinished,
+	kFilterFinished,
+	kFilterNewest,
+	kFilterOldest
+};
+
+constexpr int64 kMonthUsecs = 30LL * 24 * 60 * 60 * 1000000;
+
+BMenuItem*
+FilterItem(const char* label, int32 filter) {
+	BMessage* message = new BMessage(kMsgFilterProjects);
+	message->AddInt32("filter", filter);
+	return new BMenuItem(label, message);
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
+}
+
 MainWindow::MainWindow(ProjectStore& store, Settings& settings)
 	: BWindow(BRect(0, 0, 620, 460), kAppTitle, B_TITLED_WINDOW,
 		B_AUTO_UPDATE_SIZE_LIMITS), fStore(store), fSettings(settings), fWatching(false),
-		fEmptyStateInitialised(false), fShowingEmpty(false) {
+		fEmptyStateInitialised(false), fShowingEmpty(false), fFilter(kFilterAll) {
 	fList = new BListView("projects", B_SINGLE_SELECTION_LIST);
 	fList->SetInvocationMessage(new BMessage(kMsgEditProject));
 	fEmpty = new BStringView("empty", "No projects yet. Choose New to begin.");
@@ -27,10 +51,26 @@ MainWindow::MainWindow(ProjectStore& store, Settings& settings)
 	BButton* add = new BButton("New", new BMessage(kMsgNewProject));
 	fEdit = new BButton("Edit", new BMessage(kMsgEditProject));
 	fDelete = new BButton("Delete", new BMessage(kMsgDeleteProject));
+	BPopUpMenu* filterMenu = new BPopUpMenu("project filter");
+	filterMenu->SetRadioMode(true);
+	filterMenu->SetLabelFromMarked(true);
+	filterMenu->AddItem(FilterItem("All", kFilterAll));
+	filterMenu->AddItem(FilterItem("Unfinished", kFilterUnfinished));
+	filterMenu->AddItem(FilterItem("Finished", kFilterFinished));
+	filterMenu->AddSeparatorItem();
+	filterMenu->AddItem(FilterItem("Newest", kFilterNewest));
+	filterMenu->AddItem(FilterItem("Oldest", kFilterOldest));
+	filterMenu->ItemAt(0)->SetMarked(true);
+	filterMenu->SetTargetForItems(this);
+	BMenuField* filterField = new BMenuField("Filter:", filterMenu);
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL, B_USE_DEFAULT_SPACING)
 		.SetInsets(B_USE_WINDOW_INSETS)
-		.Add(new BStringView("heading", "Projects"))
+		.AddGroup(B_HORIZONTAL)
+			.Add(new BStringView("heading", "Projects"))
+			.AddGlue()
+			.Add(filterField)
+		.End()
 		.Add(fEmpty)
 		.Add(new BScrollView("project_scroll", fList, 0, false, true), 1)
 		.AddGroup(B_HORIZONTAL)
@@ -67,6 +107,12 @@ MainWindow::Reload() {
 		message << strerror(status);
 		(new BAlert("Michi", message.String(), "OK"))->Go();
 	}
+	bool hasProjects = !fProjects.empty();
+	fProjects.erase(std::remove_if(fProjects.begin(), fProjects.end(),
+		[this](const Project& project) { return !_MatchesFilter(project); }), fProjects.end());
+	fEmpty->SetText(hasProjects
+		? "No projects match this filter."
+		: "No projects yet. Choose New to begin.");
 	auto less = [this](const Project& a, const Project& b) {
 		int64 left = fSettings.sortField == SortField::Created ? a.created : a.modified;
 		int64 right = fSettings.sortField == SortField::Created ? b.created : b.modified;
@@ -94,9 +140,26 @@ MainWindow::MessageReceived(BMessage* message) {
 			break;
 		}
 		case kMsgDeleteProject: _DeleteSelected(); break;
+		case kMsgFilterProjects:
+			if (message->FindInt32("filter", &fFilter) == B_OK)
+				Reload();
+			break;
 		case kMsgProjectsChanged:
 		case kMsgSettingsChanged: Reload(); break;
 		default: BWindow::MessageReceived(message); break;
+	}
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
+
+
+bool
+MainWindow::_MatchesFilter(const Project& project) const {
+	switch (fFilter) {
+		case kFilterUnfinished: return project.progress < 100;
+		case kFilterFinished: return project.progress == 100;
+		case kFilterNewest: return project.modified >= real_time_clock_usecs() - kMonthUsecs;
+		case kFilterOldest: return project.modified < real_time_clock_usecs() - kMonthUsecs;
+		default: return true;
 	}
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
