@@ -42,13 +42,6 @@ DEVEL_DIRECTORY := \
 	$(shell findpaths -r "makefile_engine" B_FIND_PATH_DEVELOP_DIRECTORY)
 include $(DEVEL_DIRECTORY)/etc/makefile-engine
 
-all:
-	$(MAKE) -C $(SOURCE_DIRECTORY)
-
-clean:
-	$(MAKE) -C $(SOURCE_DIRECTORY) clean
-	rm -rf $(PACKAGE_STAGE)
-
 .PHONY: install
 install: all
 	@if [ -z "$(INSTALL_DIRECTORY)" ] || [ "$(INSTALL_DIRECTORY)" = "/apps" ]; then \
