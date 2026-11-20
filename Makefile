@@ -33,31 +33,38 @@ COMPILER_FLAGS = -std=c++17 -Woverloaded-virtual -Wwrite-strings
 LINKER_FLAGS =
 APP_VERSION =
 DRIVER_PATH =
-PACKAGE_STAGE := $(BUILD_DIRECTORY)/package
+
+INSTALL_DIR ?= $(shell finddir B_USER_NONPACKAGED_DIRECTORY)/apps
+
+# Keep the package version in sync with src/Constants.h and resources/Michi.rdef.
+PACKAGE_NAME ?= $(NAME)
+PACKAGE_VERSION ?= 0.42
+PACKAGE_REVISION ?= 1
 PACKAGE_ARCH ?= $(shell getarch)
+PACKAGE_STAGE := $(CURDIR)/package
 PACKAGE_FILE := $(CURDIR)/$(PACKAGE_NAME)-$(PACKAGE_VERSION)-$(PACKAGE_REVISION)-$(PACKAGE_ARCH).hpkg
-INSTALL_DIRECTORY ?= $(shell finddir B_USER_NONPACKAGED_DIRECTORY)/apps
+
+.DEFAULT_GOAL := default
+.PHONY: all install hpkg
+
+# The makefile engine supplies the build and the copy half of `install`.
+# Check the destination before that copy can create anything in the wrong place.
+install ::
+	@if [ -z "$(INSTALL_DIR)" ] || [ "$(INSTALL_DIR)" = "/apps" ]; then \
+		echo "error: could not determine the user non-packaged applications directory" >&2; \
+		exit 1; \
+	fi
 
 DEVEL_DIRECTORY := \
 	$(shell findpaths -r "makefile_engine" B_FIND_PATH_DEVELOP_DIRECTORY)
 include $(DEVEL_DIRECTORY)/etc/makefile-engine
 
-.PHONY: install
-install: all
-	@if [ -z "$(INSTALL_DIRECTORY)" ] || [ "$(INSTALL_DIRECTORY)" = "/apps" ]; then \
-		echo "error: could not determine the user non-packaged applications directory" >&2; \
-		exit 1; \
-	fi; \
-	binary=$$(find $(SOURCE_DIRECTORY) -maxdepth 2 -type f -name $(APP_NAME) -path '*/objects.*/*' -print -quit); \
-	if [ -z "$$binary" ]; then \
-		echo "error: could not find the built $(APP_NAME) binary" >&2; \
-		exit 1; \
-	fi; \
-	mkdir -p "$(INSTALL_DIRECTORY)"; \
-	install -m 755 "$$binary" "$(INSTALL_DIRECTORY)/$(APP_NAME)"; \
-	echo "Installed $(APP_NAME) in $(INSTALL_DIRECTORY)"
+all: default
 
-hpkg: all
+install ::
+	@mimeset -f "$(INSTALL_DIR)/$(NAME)"
+
+hpkg: default
 	@set -e; \
 	if [ -z "$(PACKAGE_ARCH)" ]; then \
 		echo "error: could not determine the Haiku package architecture" >&2; \
@@ -67,15 +74,14 @@ hpkg: all
 		echo "error: Haiku's package command was not found" >&2; \
 		exit 1; \
 	}; \
-	binary=$$(find $(SOURCE_DIRECTORY) -maxdepth 2 -type f -name $(APP_NAME) -path '*/objects.*/*' -print -quit); \
-	if [ -z "$$binary" ]; then \
-		echo "error: could not find the built $(APP_NAME) binary" >&2; \
+	test -f packaging/PackageInfo.in || { \
+		echo "error: packaging/PackageInfo.in was not found" >&2; \
 		exit 1; \
-	fi; \
+	}; \
 	rm -rf "$(PACKAGE_STAGE)"; \
 	mkdir -p "$(PACKAGE_STAGE)/apps"; \
-	install -m 755 "$$binary" "$(PACKAGE_STAGE)/apps/$(APP_NAME)"; \
-	sed 's/@ARCH@/$(PACKAGE_ARCH)/g' packaging/PackageInfo.in > "$(PACKAGE_STAGE)/.PackageInfo"; \
+	install -m 755 "$(TARGET)" "$(PACKAGE_STAGE)/apps/$(NAME)"; \
+	sed -e 's/@ARCH@/$(PACKAGE_ARCH)/g' -e 's/@VERSION@/$(PACKAGE_VERSION)/g' -e 's/@REVISION@/$(PACKAGE_REVISION)/g' packaging/PackageInfo.in > "$(PACKAGE_STAGE)/.PackageInfo"; \
 	package create -C "$(PACKAGE_STAGE)" "$(PACKAGE_FILE)"; \
 	test -f "$(PACKAGE_FILE)"; \
 	echo "Created $(PACKAGE_FILE)"

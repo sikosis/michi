@@ -1,0 +1,19 @@
+name michi
+version @VERSION@-@REVISION@
+architecture @ARCH@
+summary "Project progress tracker for Haiku"
+description "Michi is a small native Haiku project-progress tracker with a Deskbar replicant."
+vendor "Sikosis"
+packager "Sikosis <phil@sikosis.com>"
+copyrights {
+	"Copyright (c) 2026 Sikosis"
+}
+licenses {
+	"MIT"
+}
+urls {
+	"https://github.com/sikosis/michi"
+}
+provides {
+	app:michi = @VERSION@
+}

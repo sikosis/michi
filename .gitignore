@@ -1,1 +1,3 @@
 update-git.sh
+package/
+*.hpkg
