@@ -132,7 +132,7 @@ BView* CreateLicencesView() {
 
 }
 
-AboutWindow::AboutWindow() : BWindow(BRect(0, 0, 320, 220), kAboutWindowTitle, B_TITLED_WINDOW,	B_NOT_ZOOMABLE | B_NOT_RESIZABLE | B_CLOSE_ON_ESCAPE) {
+AboutWindow::AboutWindow() : BWindow(BRect(0, 0, 440, 320), kAboutWindowTitle, B_TITLED_WINDOW,	B_NOT_ZOOMABLE | B_NOT_RESIZABLE | B_CLOSE_ON_ESCAPE) {
 	BStringView* title = new BStringView("title", "michi");
 	BFont titleFont(*be_bold_font);
 	titleFont.SetSize(be_plain_font->Size() * 1.8f);
@@ -140,7 +140,7 @@ AboutWindow::AboutWindow() : BWindow(BRect(0, 0, 320, 220), kAboutWindowTitle, B
 
 	BStringView* version = new BStringView("version", "Version " MICHI_VERSION);
 	BStringView* description
-		= new BStringView("description", "A simple Deskbar/Replicant Project Progress Tracker for Haiku.");
+		= new BStringView("description", "A simple Deskbar/Replicant Project Progress Tracker.");
 
 	BTabView* tabs = new BTabView("about tabs", B_WIDTH_FROM_LABEL);
 	tabs->AddTab(CreateCreditsView());
@@ -158,7 +158,7 @@ AboutWindow::AboutWindow() : BWindow(BRect(0, 0, 320, 220), kAboutWindowTitle, B
 				.Add(version)
 				.AddStrut(3)
 				.Add(description)
-				.Add(new LinkView("source link", "github.com/sikosis/michi", "https://github.com/sikosis/michi"))
+				.Add(new LinkView("source link", "https://github.com/sikosis/michi", "https://github.com/sikosis/michi"))
 				.AddGlue()
 			.End()
 		.End()

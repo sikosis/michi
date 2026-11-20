@@ -1,0 +1,32 @@
+mkdir -p objects.x86_64-cc15-release; \
+mkdepend  -Iobjects.x86_64-cc15-release/  -Iresources/  -Isrc/  -Isrc -p .cpp:objects.x86_64-cc15-release/%n.o -m -f "objects.x86_64-cc15-release/main.d" src/main.cpp
+mkdir -p objects.x86_64-cc15-release; \
+mkdepend  -Iobjects.x86_64-cc15-release/  -Iresources/  -Isrc/  -Isrc -p .cpp:objects.x86_64-cc15-release/%n.o -m -f "objects.x86_64-cc15-release/MichiApp.d" src/MichiApp.cpp
+mkdir -p objects.x86_64-cc15-release; \
+mkdepend  -Iobjects.x86_64-cc15-release/  -Iresources/  -Isrc/  -Isrc -p .cpp:objects.x86_64-cc15-release/%n.o -m -f "objects.x86_64-cc15-release/AboutWindow.d" src/AboutWindow.cpp
+mkdir -p objects.x86_64-cc15-release; \
+mkdepend  -Iobjects.x86_64-cc15-release/  -Iresources/  -Isrc/  -Isrc -p .cpp:objects.x86_64-cc15-release/%n.o -m -f "objects.x86_64-cc15-release/Project.d" src/Project.cpp
+mkdir -p objects.x86_64-cc15-release; \
+mkdepend  -Iobjects.x86_64-cc15-release/  -Iresources/  -Isrc/  -Isrc -p .cpp:objects.x86_64-cc15-release/%n.o -m -f "objects.x86_64-cc15-release/ProjectItem.d" src/ProjectItem.cpp
+mkdir -p objects.x86_64-cc15-release; \
+mkdepend  -Iobjects.x86_64-cc15-release/  -Iresources/  -Isrc/  -Isrc -p .cpp:objects.x86_64-cc15-release/%n.o -m -f "objects.x86_64-cc15-release/ProjectEditor.d" src/ProjectEditor.cpp
+mkdir -p objects.x86_64-cc15-release; \
+mkdepend  -Iobjects.x86_64-cc15-release/  -Iresources/  -Isrc/  -Isrc -p .cpp:objects.x86_64-cc15-release/%n.o -m -f "objects.x86_64-cc15-release/ProjectReplicantView.d" src/ProjectReplicantView.cpp
+mkdir -p objects.x86_64-cc15-release; \
+mkdepend  -Iobjects.x86_64-cc15-release/  -Iresources/  -Isrc/  -Isrc -p .cpp:objects.x86_64-cc15-release/%n.o -m -f "objects.x86_64-cc15-release/SettingsWindow.d" src/SettingsWindow.cpp
+g++ -c src/main.cpp -iquote./  -iquoteobjects.x86_64-cc15-release/  -iquoteresources/  -iquotesrc/  -iquotesrc  -O1  -Wall -Wno-multichar -Wno-ctor-dtor-privacy  -std=c++17 -Woverloaded-virtual -Wwrite-strings -o "objects.x86_64-cc15-release/main.o"
+g++ -c src/MichiApp.cpp -iquote./  -iquoteobjects.x86_64-cc15-release/  -iquoteresources/  -iquotesrc/  -iquotesrc  -O1  -Wall -Wno-multichar -Wno-ctor-dtor-privacy  -std=c++17 -Woverloaded-virtual -Wwrite-strings -o "objects.x86_64-cc15-release/MichiApp.o"
+g++ -c src/AboutWindow.cpp -iquote./  -iquoteobjects.x86_64-cc15-release/  -iquoteresources/  -iquotesrc/  -iquotesrc  -O1  -Wall -Wno-multichar -Wno-ctor-dtor-privacy  -std=c++17 -Woverloaded-virtual -Wwrite-strings -o "objects.x86_64-cc15-release/AboutWindow.o"
+g++ -c src/Project.cpp -iquote./  -iquoteobjects.x86_64-cc15-release/  -iquoteresources/  -iquotesrc/  -iquotesrc  -O1  -Wall -Wno-multichar -Wno-ctor-dtor-privacy  -std=c++17 -Woverloaded-virtual -Wwrite-strings -o "objects.x86_64-cc15-release/Project.o"
+g++ -c src/ProjectItem.cpp -iquote./  -iquoteobjects.x86_64-cc15-release/  -iquoteresources/  -iquotesrc/  -iquotesrc  -O1  -Wall -Wno-multichar -Wno-ctor-dtor-privacy  -std=c++17 -Woverloaded-virtual -Wwrite-strings -o "objects.x86_64-cc15-release/ProjectItem.o"
+g++ -c src/ProjectEditor.cpp -iquote./  -iquoteobjects.x86_64-cc15-release/  -iquoteresources/  -iquotesrc/  -iquotesrc  -O1  -Wall -Wno-multichar -Wno-ctor-dtor-privacy  -std=c++17 -Woverloaded-virtual -Wwrite-strings -o "objects.x86_64-cc15-release/ProjectEditor.o"
+g++ -c src/ProjectReplicantView.cpp -iquote./  -iquoteobjects.x86_64-cc15-release/  -iquoteresources/  -iquotesrc/  -iquotesrc  -O1  -Wall -Wno-multichar -Wno-ctor-dtor-privacy  -std=c++17 -Woverloaded-virtual -Wwrite-strings -o "objects.x86_64-cc15-release/ProjectReplicantView.o"
+g++ -c src/SettingsWindow.cpp -iquote./  -iquoteobjects.x86_64-cc15-release/  -iquoteresources/  -iquotesrc/  -iquotesrc  -O1  -Wall -Wno-multichar -Wno-ctor-dtor-privacy  -std=c++17 -Woverloaded-virtual -Wwrite-strings -o "objects.x86_64-cc15-release/SettingsWindow.o"
+g++ -c src/MainWindow.cpp -iquote./  -iquoteobjects.x86_64-cc15-release/  -iquoteresources/  -iquotesrc/  -iquotesrc  -O1  -Wall -Wno-multichar -Wno-ctor-dtor-privacy  -std=c++17 -Woverloaded-virtual -Wwrite-strings -o "objects.x86_64-cc15-release/MainWindow.o"
+g++ -c src/DeskbarView.cpp -iquote./  -iquoteobjects.x86_64-cc15-release/  -iquoteresources/  -iquotesrc/  -iquotesrc  -O1  -Wall -Wno-multichar -Wno-ctor-dtor-privacy  -std=c++17 -Woverloaded-virtual -Wwrite-strings -o "objects.x86_64-cc15-release/DeskbarView.o"
+cat resources/Michi.rdef | cc -E -iquote./  -iquoteobjects.x86_64-cc15-release/  -iquoteresources/  -iquotesrc/  -iquotesrc  -O1  -Wall -Wno-multichar  -std=c++17 -Woverloaded-virtual -Wwrite-strings - | grep -av '^#' | rc -I resources/ -o "objects.x86_64-cc15-release/Michi.rsrc" -
+cc1: warning: command-line option '-std=c++17' is valid for C++/ObjC++ but not for C
+cc1: warning: command-line option '-Woverloaded-virtual=2' is valid for C++/ObjC++ but not for C
+cc -o "objects.x86_64-cc15-release/michi" 	objects.x86_64-cc15-release/main.o objects.x86_64-cc15-release/MichiApp.o objects.x86_64-cc15-release/AboutWindow.o objects.x86_64-cc15-release/Project.o objects.x86_64-cc15-release/ProjectItem.o objects.x86_64-cc15-release/ProjectEditor.o objects.x86_64-cc15-release/ProjectReplicantView.o objects.x86_64-cc15-release/SettingsWindow.o objects.x86_64-cc15-release/MainWindow.o objects.x86_64-cc15-release/DeskbarView.o  -Xlinker -soname=_APP_  -Lobjects.x86_64-cc15-release/  -Lresources/  -Lsrc/    -lbe  -lstdc++  -lsupc++ 
+xres -o objects.x86_64-cc15-release/michi 	objects.x86_64-cc15-release/Michi.rsrc
+mimeset -f "objects.x86_64-cc15-release/michi"
