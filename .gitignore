@@ -2,3 +2,4 @@ update-git.sh
 package/
 *.hpkg
 objects.x86_64-cc15-release/
+objects.x86_64-cc15-release/*
