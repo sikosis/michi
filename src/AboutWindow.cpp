@@ -16,33 +16,31 @@
 #include <View.h>
 
 namespace {
-class LogoView : public BView {
-public:
-	LogoView();
-	void Draw(BRect updateRect) override;
-};
+    class LogoView : public BView {
+        public:
+            LogoView();
+            void Draw(BRect updateRect) override;
+    };
 
-class LinkView : public BStringView {
-public:
-	LinkView(const char* name, const char* label, const char* url);
-	void AttachedToWindow() override;
-	void MouseDown(BPoint point) override;
+    class LinkView : public BStringView {
+        public:
+            LinkView(const char* name, const char* label, const char* url);
+            void AttachedToWindow() override;
+            void MouseDown(BPoint point) override;
 
-private:
-	BString fUrl;
-};
+        private:
+            BString fUrl;
+    };
 
-LogoView::LogoView()
-	: BView("application icon", B_WILL_DRAW) {
-	SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
-	SetExplicitMinSize(BSize(64, 64));
-	SetExplicitMaxSize(BSize(64, 64));
+LogoView::LogoView() : BView("application icon", B_WILL_DRAW) {
+    SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
+    SetExplicitMinSize(BSize(64, 64));
+    SetExplicitMaxSize(BSize(64, 64));
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 
-void
-LogoView::Draw(BRect updateRect) {
+void LogoView::Draw(BRect updateRect) {
 	(void)updateRect;
 	BRect bounds(Bounds());
 	BRect icon(bounds.InsetByCopy(8, 8));
@@ -73,8 +71,7 @@ LinkView::LinkView(const char* name, const char* label, const char* url)
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 
-void
-LinkView::AttachedToWindow() {
+void LinkView::AttachedToWindow() {
 	BStringView::AttachedToWindow();
 	SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 	rgb_color background = ui_color(B_PANEL_BACKGROUND_COLOR);
@@ -85,8 +82,7 @@ LinkView::AttachedToWindow() {
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 
-void
-LinkView::MouseDown(BPoint point) {
+void LinkView::MouseDown(BPoint point) {
 	(void)point;
 	const char* arguments[] = {fUrl.String()};
 	be_roster->Launch("text/html", 1, arguments);
@@ -94,8 +90,7 @@ LinkView::MouseDown(BPoint point) {
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 
-BStringView*
-Heading(const char* name, const char* text) {
+BStringView* Heading(const char* name, const char* text) {
 	BStringView* heading = new BStringView(name, text);
 	heading->SetFont(be_bold_font);
 	return heading;
@@ -103,28 +98,26 @@ Heading(const char* name, const char* text) {
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 
-BView*
-CreateCreditsView() {
+BView* CreateCreditsView() {
 	BView* view = new BView("Credits", B_WILL_DRAW);
 	view->SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 	BLayoutBuilder::Group<>(view, B_VERTICAL, 5)
 		.SetInsets(12)
 		.Add(Heading("project heading", "Project"))
-		.Add(new BStringView("copyright", "Copyright 2026 The michi contributors"))
+		.Add(new BStringView("copyright", "(C)2026 Sikosis"))
 		.AddStrut(8)
-		.Add(Heading("current heading", "Current Contributor"))
+		.Add(Heading("current heading", "Created:"))
 		.Add(new BStringView("current contributor", "Sikosis"))
 		.AddStrut(8)
-		.Add(Heading("thanks heading", "Special Thanks"))
-		.Add(new BStringView("haiku thanks", "The Haiku project and HaikuArchives community"))
+        //.Add(Heading("thanks heading", "Special Thanks"))
+		//.Add(new BStringView("haiku thanks", ""))
 		.AddGlue();
 	return view;
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 
-BView*
-CreateLicencesView() {
+BView* CreateLicencesView() {
 	BView* view = new BView("Licences", B_WILL_DRAW);
 	view->SetViewUIColor(B_PANEL_BACKGROUND_COLOR);
 	BLayoutBuilder::Group<>(view, B_VERTICAL, 5)
@@ -136,11 +129,10 @@ CreateLicencesView() {
 	return view;
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
+
 }
 
-AboutWindow::AboutWindow()
-	: BWindow(BRect(0, 0, 500, 440), kAboutWindowTitle, B_TITLED_WINDOW,
-		B_NOT_ZOOMABLE | B_NOT_RESIZABLE | B_CLOSE_ON_ESCAPE) {
+AboutWindow::AboutWindow() : BWindow(BRect(0, 0, 320, 220), kAboutWindowTitle, B_TITLED_WINDOW,	B_NOT_ZOOMABLE | B_NOT_RESIZABLE | B_CLOSE_ON_ESCAPE) {
 	BStringView* title = new BStringView("title", "michi");
 	BFont titleFont(*be_bold_font);
 	titleFont.SetSize(be_plain_font->Size() * 1.8f);
@@ -148,7 +140,7 @@ AboutWindow::AboutWindow()
 
 	BStringView* version = new BStringView("version", "Version " MICHI_VERSION);
 	BStringView* description
-		= new BStringView("description", "A native project progress tracker for Haiku.");
+		= new BStringView("description", "A simple Deskbar/Replicant Project Progress Tracker for Haiku.");
 
 	BTabView* tabs = new BTabView("about tabs", B_WIDTH_FROM_LABEL);
 	tabs->AddTab(CreateCreditsView());
@@ -166,8 +158,7 @@ AboutWindow::AboutWindow()
 				.Add(version)
 				.AddStrut(3)
 				.Add(description)
-				.Add(new LinkView("source link", "github.com/sikosis/michi",
-					"https://github.com/sikosis/michi"))
+				.Add(new LinkView("source link", "github.com/sikosis/michi", "https://github.com/sikosis/michi"))
 				.AddGlue()
 			.End()
 		.End()

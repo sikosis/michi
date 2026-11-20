@@ -45,15 +45,13 @@ void RegisterProjectAttributes(BMimeType& type) {
 
 }
 
-MichiApp::MichiApp()
-	: BApplication(kAppSignature), fMainWindow(nullptr), fInitialMessageHandled(false) {
+MichiApp::MichiApp() : BApplication(kAppSignature), fMainWindow(nullptr), fInitialMessageHandled(false) {
 	fSettingsStore.Load(fSettings);
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 
-void
-MichiApp::ReadyToRun() {
+void MichiApp::ReadyToRun() {
 	BMimeType app(kAppSignature);
 	if (!app.IsInstalled())
 		app.Install();
@@ -74,14 +72,12 @@ MichiApp::ReadyToRun() {
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 
-void
-MichiApp::ArgvReceived(int32, char**) {
+void MichiApp::ArgvReceived(int32, char**) {
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 
-void
-MichiApp::_InstallDeskbarItem() {
+void MichiApp::_InstallDeskbarItem() {
 	BDeskbar deskbar;
 	if (!deskbar.IsRunning())
 		return;
@@ -102,8 +98,7 @@ MichiApp::_InstallDeskbarItem() {
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 
-void
-MichiApp::_ShowMain() {
+void MichiApp::_ShowMain() {
 	if (fMainWindow != nullptr) {
 		if (fMainWindow->Lock()) {
 			fMainWindow->Reload();
@@ -119,8 +114,7 @@ MichiApp::_ShowMain() {
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 
-void
-MichiApp::_ShowSettings() {
+void MichiApp::_ShowSettings() {
 	for (int32 index = 0; index < CountWindows(); ++index) {
 		SettingsWindow* window = dynamic_cast<SettingsWindow*>(WindowAt(index));
 		if (window != nullptr && window->Lock()) {
@@ -137,15 +131,13 @@ MichiApp::_ShowSettings() {
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 
-void
-MichiApp::AboutRequested() {
+void MichiApp::AboutRequested() {
 	(new AboutWindow())->Show();
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 
-void
-MichiApp::MessageReceived(BMessage* message) {
+void MichiApp::MessageReceived(BMessage* message) {
 	switch (message->what) {
 		case kMsgMaybeShowMain:
 			if (!fInitialMessageHandled)
@@ -172,8 +164,7 @@ MichiApp::MessageReceived(BMessage* message) {
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 
-void
-MichiApp::_SaveProject(BMessage* message) {
+void MichiApp::_SaveProject(BMessage* message) {
 	Project project;
 	const char* value;
 	if (message->FindString("id", &value) == B_OK) project.id = value;
@@ -207,8 +198,7 @@ MichiApp::_SaveProject(BMessage* message) {
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 
-void
-MichiApp::_ApplySettings(BMessage* message) {
+void MichiApp::_ApplySettings(BMessage* message) {
 	int32 field;
 	if (message->FindInt32("sort_field", &field) == B_OK)
 		fSettings.sortField = static_cast<SortField>(field);

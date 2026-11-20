@@ -41,8 +41,7 @@ enum : int32 {
 
 constexpr int64 kMonthUsecs = 30LL * 24 * 60 * 60 * 1000000;
 
-int64
-StartOfToday() {
+int64 StartOfToday() {
 	time_t now = time(nullptr);
 	struct tm localTime;
 	if (localtime_r(&now, &localTime) == nullptr)
@@ -56,19 +55,17 @@ StartOfToday() {
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 class ProjectListView : public BListView {
-public:
-	ProjectListView();
-	void MouseDown(BPoint where) override;
-};
+    public:
+        ProjectListView();
+        void MouseDown(BPoint where) override;
+    };
 
-ProjectListView::ProjectListView()
-	: BListView("projects", B_SINGLE_SELECTION_LIST) {
+ProjectListView::ProjectListView() : BListView("projects", B_SINGLE_SELECTION_LIST) {
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 
-void
-ProjectListView::MouseDown(BPoint where) {
+void ProjectListView::MouseDown(BPoint where) {
 	int32 buttons = 0;
 	if (Window() != nullptr && Window()->CurrentMessage() != nullptr)
 		Window()->CurrentMessage()->FindInt32("buttons", &buttons);
@@ -86,8 +83,7 @@ ProjectListView::MouseDown(BPoint where) {
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
-BMenuItem*
-FilterItem(const char* label, int32 filter) {
+BMenuItem* FilterItem(const char* label, int32 filter) {
 	BMessage* message = new BMessage(kMsgFilterProjects);
 	message->AddInt32("filter", filter);
 	return new BMenuItem(label, message);
@@ -101,7 +97,7 @@ MainWindow::MainWindow(ProjectStore& store, Settings& settings)
 		fEmptyStateInitialised(false), fShowingEmpty(false), fFilter(kFilterAll) {
 	fList = new ProjectListView();
 	fList->SetInvocationMessage(new BMessage(kMsgEditProject));
-	fEmpty = new BStringView("empty", "No projects yet. Choose New to begin.");
+	fEmpty = new BStringView("empty", "No Projects Yet. Choose New to Begin.");
 	fEmpty->SetAlignment(B_ALIGN_CENTER);
 	BButton* add = new BButton("New", new BMessage(kMsgNewProject));
 	fReplicant = new BButton("Replicant" B_UTF8_ELLIPSIS,
@@ -153,21 +149,20 @@ MainWindow::~MainWindow() {
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 
-void
-MainWindow::Reload() {
+void MainWindow::Reload() {
 	fList->MakeEmpty();
 	status_t status = fStore.LoadAll(fProjects);
 	if (status != B_OK) {
-		BString message("Michi could not read its Project Folder: ");
+		BString message("michi could not read its Project Folder: ");
 		message << strerror(status);
-		(new BAlert("Michi", message.String(), "OK"))->Go();
+		(new BAlert("michi", message.String(), "OK"))->Go();
 	}
 	bool hasProjects = !fProjects.empty();
 	fProjects.erase(std::remove_if(fProjects.begin(), fProjects.end(),
 		[this](const Project& project) { return !_MatchesFilter(project); }), fProjects.end());
 	fEmpty->SetText(hasProjects
-		? "No projects match this filter."
-		: "No projects yet. Choose New to begin.");
+		? "No Projects Match this Filter."
+		: "No Projects Yet. Choose New to Begin.");
 	auto less = [this](const Project& a, const Project& b) {
 		int64 left = fSettings.sortField == SortField::Created ? a.created : a.modified;
 		int64 right = fSettings.sortField == SortField::Created ? b.created : b.modified;
@@ -183,8 +178,7 @@ MainWindow::Reload() {
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 
-void
-MainWindow::MessageReceived(BMessage* message) {
+void MainWindow::MessageReceived(BMessage* message) {
 	switch (message->what) {
 		case B_NODE_MONITOR: Reload(); break;
 		case kMsgNewProject: _OpenEditor(nullptr); break;
@@ -214,8 +208,7 @@ MainWindow::MessageReceived(BMessage* message) {
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 
-void
-MainWindow::_ShowProjectMenu(BPoint where) {
+void MainWindow::_ShowProjectMenu(BPoint where) {
 	BPopUpMenu* menu = new BPopUpMenu("project actions", false, false);
 	menu->AddItem(new BMenuItem("Edit", new BMessage(kMsgEditProject)));
 	menu->AddItem(new BMenuItem("Delete" B_UTF8_ELLIPSIS,
@@ -235,8 +228,7 @@ MainWindow::_ShowProjectMenu(BPoint where) {
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 
-void
-MainWindow::_ShowReplicant(float width, float height) {
+void MainWindow::_ShowReplicant(float width, float height) {
 	BWindow* window = new BWindow(BRect(0, 0, width, height), kReplicantWindowTitle,
 		B_TITLED_WINDOW, B_NOT_ZOOMABLE | B_NOT_RESIZABLE | B_CLOSE_ON_ESCAPE);
 	window->AddChild(new ProjectReplicantView(window->Bounds()));
@@ -246,8 +238,7 @@ MainWindow::_ShowReplicant(float width, float height) {
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 
-void
-MainWindow::_ShowReplicantMenu() {
+void MainWindow::_ShowReplicantMenu() {
 	BPopUpMenu* menu = new BPopUpMenu("replicant size", false, false);
 	menu->AddItem(new BMenuItem("Small — 2 projects", new BMessage(kSmallReplicant)));
 	menu->AddItem(new BMenuItem("Medium — 5 projects", new BMessage(kMediumReplicant)));
@@ -267,8 +258,7 @@ MainWindow::_ShowReplicantMenu() {
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 
-bool
-MainWindow::_MatchesFilter(const Project& project) const {
+bool MainWindow::_MatchesFilter(const Project& project) const {
 	switch (fFilter) {
 		case kFilterUnfinished: return project.progress < 100;
 		case kFilterFinished: return project.progress == 100;
@@ -281,8 +271,7 @@ MainWindow::_MatchesFilter(const Project& project) const {
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 
-Project*
-MainWindow::_SelectedProject() {
+Project* MainWindow::_SelectedProject() {
 	int32 index = fList->CurrentSelection();
 	return index >= 0 && index < static_cast<int32>(fProjects.size())
 		? &fProjects[static_cast<size_t>(index)] : nullptr;
@@ -290,15 +279,13 @@ MainWindow::_SelectedProject() {
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 
-void
-MainWindow::_OpenEditor(const Project* project) {
+void MainWindow::_OpenEditor(const Project* project) {
 	(new ProjectEditor(project, fSettings.defaultColor, BMessenger(be_app)))->Show();
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 
-void
-MainWindow::_DeleteSelected() {
+void MainWindow::_DeleteSelected() {
 	Project* project = _SelectedProject();
 	if (project == nullptr)
 		return;
@@ -312,15 +299,14 @@ MainWindow::_DeleteSelected() {
 	if (status != B_OK) {
 		BString error("Could not move the project to Trash: ");
 		error << strerror(status);
-		(new BAlert("Michi", error.String(), "OK"))->Go();
+		(new BAlert("michi", error.String(), "OK"))->Go();
 	}
 	Reload();
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 
-void
-MainWindow::_UpdateEmptyState() {
+void MainWindow::_UpdateEmptyState() {
 	bool empty = fProjects.empty();
 	if (fEmptyStateInitialised && empty == fShowingEmpty)
 		return;
@@ -340,8 +326,7 @@ MainWindow::_UpdateEmptyState() {
 //---------------------------------------------------------------------------------------------------------------------------------//
 
 
-bool
-MainWindow::QuitRequested() {
+bool MainWindow::QuitRequested() {
 	be_app->PostMessage(B_QUIT_REQUESTED);
 	return true;
 }
